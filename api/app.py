@@ -1,10 +1,13 @@
 from flask import Flask
+from sqlalchemy.orm import DeclarativeBase
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 
-db = SQLAlchemy()
+class Base(DeclarativeBase):
+    pass
+db = SQLAlchemy(model_class=Base)
 
 def create_app():
     app = Flask(__name__, template_folder='templates')
