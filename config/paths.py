@@ -35,6 +35,10 @@ EDA_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # -------------------------
-# TEMPLATE
-
-TEMPLATE_HTML = BASE_DIR / "presentation"
+# APP FILES
+# -------------------------
+APP = BASE_DIR / "api" / "app.py"
+MODELS = BASE_DIR / "api" / "models.py"
+ROUTES = BASE_DIR / "api" / "routes.py"
+RUN = BASE_DIR / "api" / "run.py"
+TEMPLATE_HTML = BASE_DIR / "api" / "templates"

@@ -1,3 +1,9 @@
+from pathlib import Path
+import sys
+
+ROOT_DIR = Path().resolve().parents[2]
+sys.path.append(str(ROOT_DIR))
+
 from flask import Flask
 from sqlalchemy.orm import DeclarativeBase
 from flask_sqlalchemy import SQLAlchemy
@@ -15,7 +21,7 @@ def create_app():
 
     db.init_app(app)
 
-    from routes import register_routes
+    from api.routes import register_routes
     register_routes(app, db)
 
     migrate = Migrate(app, db)
