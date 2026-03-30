@@ -1,9 +1,3 @@
-from pathlib import Path
-import sys
-
-ROOT_DIR = Path().resolve().parents[2]
-sys.path.append(str(ROOT_DIR))
-
 from api.app import db
 from datetime import date as date_type, datetime, timezone
 from decimal import Decimal
