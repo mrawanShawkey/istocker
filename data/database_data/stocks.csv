@@ -1,0 +1,31 @@
+ticker_symbol,company_name,sector_id,description,risk_level
+EGX:COMI,Commercial International Bank - Egypt (CIB) S.A.E.,1,"Egypt�s leading private-sector bank, providing a full range of financial products to enterprises, institutions, households, and individuals.",Conservative
+EGX:SWDY,El Sewedy Electric Company,8,"A global leader in integrated energy, infrastructure, and digital solutions, specializing in electrical cables, transformers, and renewable energy projects.",Conservative
+EGX:EAST,Eastern Company,5,"A major international business offering a wide range of tobacco products, including cigarettes, cigars, molasses, and pipe tobacco.",Conservative
+EGX:JUFO,Juhayna Food Industries,5,"A leading Egypt-based manufacturer specialized in the production, processing, and packaging of dairy, juice, and cooking products.",Conservative
+EGX:ABUK,Abou Kir Fertilizers & Chemical Industries,2,"A major producer adhering to global quality standards (ISO 9001, ISO 14001) and fostering socio-economic development aligned with Egypt�s Vision 2030.",Conservative
+EGX:EXPA,Export Development Bank of Egypt,1,A specialized financial institution focused on promoting Egyptian exports and providing comprehensive banking solutions to exporters and corporate clients.,Conservative
+EGX:ORWE,Oriental Weavers Carpet,11,"The world�s largest manufacturer of machine-made carpets and rugs, exporting the majority of its production to over 130 countries.",Conservative
+EGX:ETEL,Telecom Egypt,7,Egypt�s first integrated telecommunications operator and the nation�s primary provider of fixed-line and wholesale connectivity services.,Conservative
+EGX:EKHOA,Valmore Holding S.A.E,9,"A leading diversified investment group with a vast regional portfolio spanning energy (natural gas distribution), fertilizers, petrochemicals, and specialized non-banking financial services.",Conservative
+EGX:AMOC,Alexandria Mineral Oils Co.,4,A growth-focused organization delivering high-quality petroleum products while supporting the sustainability objectives of Egypt�s oil and gas modernization plan.,Conservative
+EGX:FWRY,Fawry For Banking Technology And Electronic Payment,9,"Egypt�s leading fintech platform, serving over 50 million customers through a massive network of over 340,000 service points.",Moderate
+EGX:MFPC,Misr Fertilizers Production Company MOPCO,2,"One of the largest producers of urea and ammonia in Egypt, focused on high-quality chemical manufacturing for local and international markets.",Moderate
+EGX:MTIE,MM Group for Industry & International Trade,8,"A leading Egyptian distribution company with a diverse portfolio across consumer electronics, automotive, and telecommunications.",Moderate
+EGX:EFIC,Egyptian Financial & Industrial Co.,2,"A major producer of phosphate fertilizers and chemicals, serving as a key pillar in Egypt�s industrial and agricultural sectors.",Moderate
+EGX:MASR,Madinet Masr for Housing & Development,10,A premier real estate developer (formerly MNHD) known for large-scale urban developments and high-end residential communities in Cairo.,Moderate
+EGX:TMGH,Talaat Moustafa Group Holding,10,"The largest listed real estate developer in Egypt, renowned for pioneering large-scale integrated cities and luxury hospitality destinations.",Moderate
+EGX:ISPH,Ibnsina Pharma,6,Egypt�s fastest-growing pharmaceutical distributor and a major provider of third-party logistics for the healthcare sector.,Moderate
+EGX:PHDC,Palm Hills Development Co.,10,A premier Egyptian real estate developer and market leader known for high-end integrated communities and an extensive national land bank.,Moderate
+EGX:SUGR,Delta Sugar,5,"A leading Egyptian producer of beet sugar and related agricultural products, playing a vital role in the country�s food security and industrial supply chain.",Moderate
+EGX:CCAP,QALA Holdings,9,"A leading African investment firm headquartered in Cairo, specializing in energy and infrastructure projects across Egypt and East Africa.",Moderate
+EGX:CIEB,Credit Agricole Egypt,1,"A subsidiary of the global Credit Agricole Group, providing a full suite of retail and corporate banking services backed by international expertise.",Aggressive
+EGX:ESRS,Ezz Steel,2,"The largest independent steel producer in the Middle East and North Africa, specializing in long and flat steel products for construction and industry.",Aggressive
+EGX:BTFH,Beltone Holding,9,"A comprehensive financial services provider offering brokerage, investment banking, asset management, equity research, and non-banking financial solutions.",Aggressive
+EGX:ORHD,Orascom Development Egypt (S.A.E),10,"A leading integrated community developer operating resort towns across Egypt and Europe, including El Gouna, Makadi Heights, and Taba Heights, combining real estate, hospitality, and tourism.",Aggressive
+EGX:ADIB,Abu Dhabi Islamic Bank-Egypt,1,"A leading universal Islamic bank in Egypt offering a wide range of Shari�a-compliant services to retail, corporate, and SME clients.",Aggressive
+EGX:EGAL,Egypt Aluminum,2,"The largest aluminum producer in Egypt and one of the biggest in Africa, focused on high-quality smelting and manufacturing of aluminum products.",Aggressive
+EGX:HELI,Heliopolis Housing,10,"One of Egypt's oldest and most established real estate developers, operating as a subsidiary of the Holding Company for Construction and Development.",Aggressive
+EGX:HRHO,EFG Holding S.A.E.,9,"A leading investment bank in the Arab world providing investment banking, asset management, private equity, securities brokerage, and research services.",Aggressive
+EGX:CIRA,Cairo For Investment And Real Estate Developments -CIRA Education,3,"The largest integrated education provider in Egypt's private sector, managing a wide network of schools and universities.",Aggressive
+EGX:DOMT,Arabian Food Industries Co.,5,"A leading Egyptian food manufacturer specializing in the production of cheese, juice, and bakery products for local and international markets.",Aggressive

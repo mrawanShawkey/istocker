@@ -10,16 +10,16 @@ DATA_DIR = BASE_DIR / "data"
 MARKET_DIR = DATA_DIR / "market_data"
 ML_DIR = DATA_DIR / "ml_data"
 RAW_DIR = MARKET_DIR / "raw"
-PROCESSRD_DIR = MARKET_DIR / "processed"
+PROCESSED_DIR = MARKET_DIR / "processed"
 ML_DIR = DATA_DIR / "ml_data"
 
 # -------------------------
 # Market Data Files |
 # -------------------------
 RAW_MARKET_FILE = RAW_DIR / "EGX30_Full_Dataset_Ready.csv"
-CLEANED_MARKET_FILE = PROCESSRD_DIR / "egx30_clean.csv"
+CLEANED_MARKET_FILE = PROCESSED_DIR / "egx30_clean.csv"
 MACRO_FILE = RAW_DIR / "Egypt_Economic_Data.xlsx"
-MACROECNOMIC_ALIGNMENT_FILE = PROCESSRD_DIR / "egx30_with_macro.csv"
+MACROECNOMIC_ALIGNMENT_FILE = PROCESSED_DIR / "egx30_with_macro.csv"
 MODELING_DATASET_FILE = ML_DIR / "datasets" / "EGX30_modeling_dataset.csv"
 # -------------------------
 # ML Datasets 
@@ -51,6 +51,10 @@ EDA_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # -------------------------
-# TEMPLATE
-#--------------------------
-TEMPLATE_HTML = BASE_DIR / "presentation"
+# APP FILES
+# -------------------------
+APP = BASE_DIR / "api" / "app.py"
+MODELS = BASE_DIR / "api" / "models.py"
+ROUTES = BASE_DIR / "api" / "routes.py"
+RUN = BASE_DIR / "api" / "run.py"#--------------------------
+TEMPLATE_HTML = BASE_DIR / "api" / "templates"
