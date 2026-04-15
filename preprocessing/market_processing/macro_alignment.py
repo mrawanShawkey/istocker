@@ -3,14 +3,14 @@ from pathlib import Path
 import sys
 ROOT_DIR = Path().resolve().parents[1]
 sys.path.append(str(ROOT_DIR))
-from config.paths import CLEANED_MARKET_FILE, MACRO_FILE, MACROECNOMIC_ALIGNMENT_FILE 
+from config.paths import CLEAN_MARKET_DATA, MACRO_DATA, CLEAN_MARKET_DATA_WITH_MACRO 
 
 
 class MacroAligner:
 
     def __init__(self,
-                market_file=CLEANED_MARKET_FILE,
-                macro_file=MACRO_FILE):
+                market_file=CLEAN_MARKET_DATA,
+                macro_file=MACRO_DATA):
         self.market_file = market_file
         self.macro_file = macro_file
         self.market_df = None
@@ -73,7 +73,7 @@ class MacroAligner:
 
         return self.aligned_df
 
-    def save(self, output_path=MACROECNOMIC_ALIGNMENT_FILE):
+    def save(self, output_path=CLEAN_MARKET_DATA_WITH_MACRO):
         output_path.parent.mkdir(parents=True, exist_ok=True)   
         self.aligned_df.to_csv(output_path, index=False)
         print(f"Saved aligned dataset to {output_path}")
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     aligner.load()
     aligner.align()
     aligner.save()
-    df = pd.read_csv(MACROECNOMIC_ALIGNMENT_FILE)
+    df = pd.read_csv(CLEAN_MARKET_DATA_WITH_MACRO)
     print(df[['date','gdp','inflation_rate','interest_rate']].head())
     print(aligner.macro_df.head())
     print(aligner.macro_df.columns)

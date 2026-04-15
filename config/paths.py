@@ -12,7 +12,6 @@ MARKET_DIR = DATA_DIR / "market_data"
 ML_DIR = DATA_DIR / "ml_data"
 RAW_DIR = MARKET_DIR / "raw"
 PROCESSED_DIR = MARKET_DIR / "processed"
-ML_DIR = DATA_DIR / "ml_data"
 
 # -------------------------
 # Market Data Files
@@ -25,10 +24,10 @@ STOCKS = DATABASE_DIR / "stocks.csv"
 # -------------------------
 # Market Data Files
 # -------------------------
-RAW_MARKET_FILE = RAW_DIR / "EGX30_Full_Dataset_Ready.csv"
-CLEANED_MARKET_FILE = PROCESSED_DIR / "egx30_clean.csv"
-MACRO_FILE = RAW_DIR / "Egypt_Economic_Data.xlsx"
-MACROECNOMIC_ALIGNMENT_FILE = PROCESSED_DIR / "egx30_with_macro.csv"
+RAW_MARKET_DATA = RAW_DIR / "EGX30_Full_Dataset_Ready.csv"
+CLEAN_MARKET_DATA = PROCESSED_DIR / "egx30_clean.csv"
+MACRO_DATA = RAW_DIR / "Egypt_Economic_Data.xlsx"
+CLEAN_MARKET_DATA_WITH_MACRO = PROCESSED_DIR / "egx30_with_macro.csv"
 MODELING_DATASET_FILE = ML_DIR / "datasets" / "EGX30_modeling_dataset.csv"
 
 # -------------------------
@@ -39,12 +38,13 @@ FEATURE_CACHE_DIR = FEATURES_DIR / "feature_cache"
 FEATURE_CACHE_FILE = FEATURE_CACHE_DIR / "feature_cache.csv"
 FEATURE_STABILITY_FILE = FEATURES_DIR / "feature_stability.csv"
 
+# -------------------------
 # Walk-forward evaluation results
+# -------------------------
 WALKFORWARD_RESULTS_DIR = ML_DIR / "metadata" / "walkforward_results"
 WALKFORWARD_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "walkforward_results.csv"
 LSTM_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "lstm_results.csv"
 XGBOOST_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "xgboost_results.csv"  
-
 
 # -------------------------
 # Model Comparison Results

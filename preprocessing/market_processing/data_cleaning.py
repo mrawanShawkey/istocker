@@ -3,11 +3,11 @@ from pathlib import Path
 import sys
 ROOT_DIR = Path().resolve().parents[1]
 sys.path.append(str(ROOT_DIR))
-from config.paths import RAW_MARKET_FILE, CLEANED_MARKET_FILE
+from config.paths import RAW_MARKET_DATA, CLEAN_MARKET_DATA
 
 class MarketDataCleaner:
 
-    def __init__(self, filepath=RAW_MARKET_FILE):
+    def __init__(self, filepath=RAW_MARKET_DATA):
         self.filepath = filepath
         self.df = None
 
@@ -58,7 +58,7 @@ class MarketDataCleaner:
 
         return self.df
 
-    def save(self, output_path=CLEANED_MARKET_FILE):
+    def save(self, output_path=CLEAN_MARKET_DATA):
         self.df.to_csv(output_path, index=False)
 
 if __name__ == "__main__":

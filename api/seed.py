@@ -7,7 +7,7 @@ sys.path.append(str(ROOT_DIR))
 from api.app import create_app, db
 from api.models import RiskLevel, QuestionType
 from api.models import RiskCategory, Question, Option, Sector, Stock, StockPrice, MarketIndex, IndexPrice
-from config.paths import CLEANED_MARKET_FILE, OPTIONS, QUESTIONS, SECTORS, STOCKS
+from config.paths import CLEAN_MARKET_DATA, OPTIONS, QUESTIONS, SECTORS, STOCKS
 import pandas as pd
 
 def seed():
@@ -78,7 +78,7 @@ def seed():
 
 
     #StockPrice
-    stock_prices_df = pd.read_csv(CLEANED_MARKET_FILE)
+    stock_prices_df = pd.read_csv(CLEAN_MARKET_DATA)
     stock_map = {s.ticker_symbol: s.id for s in Stock.query.all()}
     for _, row in stock_prices_df.iterrows():
         price = StockPrice(

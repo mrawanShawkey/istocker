@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 ROOT_DIR = Path().resolve()
 sys.path.append(str(ROOT_DIR))
-from config.paths import MACROECNOMIC_ALIGNMENT_FILE, MODELING_DATASET_FILE
+from config.paths import CLEAN_MARKET_DATA_WITH_MACRO, MODELING_DATASET_FILE
 
 # Regime dummy: choose your own break date (e.g., currency float regime)
 REGIME_BREAK_DATE = pd.Timestamp("2016-11-03")  # adjust if you use a different breakpoint
@@ -54,7 +54,7 @@ def _compute_rsi(close: pd.Series, window: int = 14) -> pd.Series:
 
 
 class FeatureEngineer:
-    def __init__(self, input_file: Path = MACROECNOMIC_ALIGNMENT_FILE):
+    def __init__(self, input_file: Path = CLEAN_MARKET_DATA_WITH_MACRO):
         self.input_file = input_file
         self.df: pd.DataFrame | None = None
 
