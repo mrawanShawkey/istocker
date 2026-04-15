@@ -6,7 +6,7 @@ sys.path.append(str(ROOT_DIR))
 
 from api.app import create_app, db
 from api.models import RiskLevel, QuestionType
-from api.models import RiskCategory, Question, Option, Sector, Stock, StockPrice, MarketIndex, IndexPrice
+from api.models import RiskCategory, Question, Option, Sector, Stock, StockPrice
 from config.paths import CLEAN_MARKET_DATA, OPTIONS, QUESTIONS, SECTORS, STOCKS
 import pandas as pd
 
@@ -93,28 +93,3 @@ def seed():
         db.session.add(price)
     db.session.commit()
     print('Stock prices seeded.')
-
-
-    #MarketIndex
-    index = MarketIndex(ticker_symbol='EGX30', index_name='Egyptian Exchange 30', description='Egypt\'s premier benchmark index, tracking the top 30 companies listed on the Egyptian Exchange in terms of liquidity and activity, with broad representation across key economic sectors.')
-    db.session.add(index)
-    db.session.commit()
-    print('Market Indices seeded.')
-
-
-    #IndexPrice
-    index_prices_df = pd.read_csv()
-    index_map = {i.ticker_symbol: i.id for i in MarketIndex.query.all()}
-    for _, row in index_prices_df.iterrows():
-        price = IndexPrice(
-            index_id = index_map[row['ticker_symbol']],
-            date = row['date'],
-            open_price = row['open'],
-            high_price = row['high'],
-            low_price = row['low'],
-            close_price = row['close'],
-            volume = row['volume']
-        )
-        db.session.add(price)
-    db.session.commit()
-    print('Index prices seeded.')

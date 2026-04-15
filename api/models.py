@@ -221,34 +221,3 @@ class Recommendation(db.Model):
 
     def __repr__(self):
         return f'<Recommendation rank {self.rank} in set {self.set_id}: stock {self.stock_id}>'
-
-
-class MarketIndex(db.Model):
-    __tablename__ = 'market_indices'
-
-    index_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    ticker_symbol: Mapped[str] = mapped_column(String(10), unique=True)
-    index_name: Mapped[str] = mapped_column(String(100))
-    description: Mapped[str] = mapped_column(Text)
-
-    index_prices: Mapped[List['IndexPrice']] = relationship('IndexPrice', back_populates='market_index')
-
-    def __repr__(self):
-        return f'<Index {self.ticker_symbol}: {self.index_name}>'
-
-class IndexPrice(db.Model):
-    __tablename__ = 'index_prices'
-    
-    price_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    index_id: Mapped[int] = mapped_column(Integer, ForeignKey('market_indices.index_id'))
-    date: Mapped[date_type] = mapped_column(Date)
-    open_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    high_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    low_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    close_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    volume: Mapped[int] = mapped_column(BigInteger)
-
-    market_index: Mapped['MarketIndex'] = relationship('MarketIndex', back_populates='index_prices')
-
-    def __repr__(self):
-        return f'<IndexPrice {self.price_id} for index {self.index_id} on {self.date} closed at {self.close_price}>'
