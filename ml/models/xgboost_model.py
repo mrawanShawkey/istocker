@@ -1,44 +1,44 @@
 from xgboost import XGBRegressor
-
+import numpy as np
 
 class XGBoostModel:
 
     def __init__(self):
-
-        # Initialize model ONCE per object
         self.model = XGBRegressor(
-            n_estimators=250,
-            max_depth=4,
-            learning_rate=0.05,
-            subsample=0.8,
-            colsample_bytree=0.8,
-            random_state=42
+            n_estimators=500,        # early stopping will find real cutoff
+            max_depth=3,             # reduced from 4 — less overfit on small N
+            learning_rate=0.03,      # slower learning → better generalization
+            subsample=0.7,
+            colsample_bytree=0.7,
+            reg_alpha=0.1,           # L1 sparsity
+            reg_lambda=2.0,          # L2 shrinkage
+            min_child_weight=5,      # prevents splits on tiny leaf groups
+            random_state=42,
+            eval_metric="rmse",
+            early_stopping_rounds=30
         )
-
-        self.is_fitted = False  # safety flag
+        self.is_fitted = False
 
     def fit(self, X, y):
+        if hasattr(X, "columns") and "symbol" in X.columns:
+            X = X.drop(columns=["symbol"])
 
-        # Handle DataFrame input
-        if hasattr(X, "columns"):
-            if "symbol" in X.columns:
-                X = X.drop(columns=["symbol"])
+        # Time-ordered validation split — last 15% of training rows
+        n = len(X)
+        split = int(n * 0.85)
+        X_tr, X_val = X[:split], X[split:]
+        y_tr, y_val = y[:split], y[split:]
 
-        # Fit model
-        self.model.fit(X, y, verbose=False)
-
-        # Mark as fitted
+        self.model.fit(
+            X_tr, y_tr,
+            eval_set=[(X_val, y_val)],
+            verbose=False
+        )
         self.is_fitted = True
 
     def predict(self, X):
-
-        # Safety check
         if not self.is_fitted:
             raise ValueError("Model was not fitted before predict()")
-
-        # Handle DataFrame input
-        if hasattr(X, "columns"):
-            if "symbol" in X.columns:
-                X = X.drop(columns=["symbol"])
-
+        if hasattr(X, "columns") and "symbol" in X.columns:
+            X = X.drop(columns=["symbol"])
         return self.model.predict(X)
