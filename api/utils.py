@@ -1,7 +1,27 @@
+###################AUTH###################
+
 #PassHash
 
 #PassCompare
 
-#AccessToken
+#CreateAccessToken
 
-#RefreshToken
+#CreateRefreshToken
+
+#VerifyAccessToken
+
+#VerifyRefreshToken
+
+###################RISK###################
+
+#CalculateRiskCapacity
+
+#CalculateRiskTolerance
+
+#CalculateTotalRisk
+
+###################MARKET###################
+
+#TopMoversPerformance
+
+#SectorPerformance
