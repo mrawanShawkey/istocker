@@ -1,5 +1,4 @@
-import datetime
-
+from datetime import datetime
 from api.app import create_app, db
 from api.models import RiskCat, RiskCatAr, RiskLevel, RiskLevelAr, QuestionType
 from api.models import RiskCategory, Question, Option, Sector, Stock, StockPrice
@@ -116,9 +115,9 @@ def seed():
             volume = row['volume']
         )
         price_list.append(price)
-        if len(price_objects) >= 1000:
-            db.session.add_all(price_objects)
-            price_objects = []
-    db.session.add_all(price_objects) 
+        if len(price_list) >= 1000:
+            db.session.add_all(price_list)
+            price_list = []
+    db.session.add_all(price_list) 
     db.session.commit()
     print('Stock prices seeded.')

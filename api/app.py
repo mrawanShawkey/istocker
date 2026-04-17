@@ -18,7 +18,7 @@ def create_app():
     login_manager.init_app(app)
 
     #LOGIN FUNCTIONALITY
-    from models import User
+    from api.models import User
     @login_manager.user_loader
     def load_user(user_name, password):
         pass
@@ -32,7 +32,7 @@ def create_app():
 
     migrate = Migrate(app, db)
 
-    from seed import seed
+    from api.seed import seed
     app.cli.command('seed')(seed)
 
     return app

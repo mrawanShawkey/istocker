@@ -237,13 +237,13 @@ class RecommendationSet(db.Model):
     __tablename__ = 'recommendation_sets'
 
     set_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    risk_level: Mapped[RiskLevel] = mapped_column(Enum(RiskLevel))
+    risk_category: Mapped[RiskCat] = mapped_column(Enum(RiskCat))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     recommendations: Mapped[List['Recommendation']] = relationship('Recommendation', back_populates='recommendation_set')
 
     def __repr__(self):
-        return f'<RecommendationSet {self.set_id} for level {self.risk_level} on {self.created_at}>'
+        return f'<RecommendationSet {self.set_id} for level {self.risk_category} on {self.created_at}>'
     
 class Recommendation(db.Model):
     #  The actual three stocks. Each row is one stock, points back to its RecommendationSet. Three rows per set.
