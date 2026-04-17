@@ -26,7 +26,7 @@ class RiskLevel(PyEnum):
 class RiskLevelAr(PyEnum):
     LOW = 'منخفض'
     MEDIUM = 'متوسط'
-    HIGH = 'عالي'
+    HIGH = 'مرتفع'
 
 class QuestionType(PyEnum):
     REGISTRATION = 'Registration'
