@@ -1,5 +1,5 @@
 from api.app import db
-from datetime import date as date_type, datetime, timezone
+from datetime import date as date_type, datetime, timezone, timedelta
 from decimal import Decimal
 from enum import Enum as PyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -8,10 +8,25 @@ from typing import Optional, List
 from flask_login import UserMixin
 
 # Enum Classes
-class RiskLevel(PyEnum):
+class RiskCat(PyEnum):
     CONSERVATIVE = 'Conservative'
     MODERATE = 'Moderate'
     AGGRESSIVE = 'Aggressive'
+
+class RiskCatAr(PyEnum):
+    CONSERVATIVE = 'محافظ'
+    MODERATE = 'متوسط'
+    AGGRESSIVE = 'جريء'
+
+class RiskLevel(PyEnum):
+    LOW = 'Low'
+    MEDIUM = 'Medium'
+    HIGH = 'High'
+
+class RiskLevelAr(PyEnum):
+    LOW = 'منخفض'
+    MEDIUM = 'متوسط'
+    HIGH = 'عالي'
 
 class QuestionType(PyEnum):
     REGISTRATION = 'Registration'
@@ -30,6 +45,7 @@ class User(db.Model, UserMixin):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
+    tokens: Mapped[List['RefreshToken']] = relationship('RefreshToken', back_populates='user')
     user_profile: Mapped['UserProfile'] = relationship('UserProfile', back_populates='user', uselist=False)
     risk_assessments: Mapped[List['RiskAssessment']] = relationship('RiskAssessment', back_populates='user')
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='user')
@@ -37,6 +53,20 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User: {self.username}>'
     
+class RefreshToken(db.Model):
+    __tablename__ = 'refresh_tokens'
+
+    token_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
+    token: Mapped[str] = mapped_column(Text, index=True, unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    expires_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc) + timedelta(days=7))
+
+    user: Mapped['User'] = relationship('User', back_populates='tokens')
+
+    def __repr__(self):
+        return f'<Refresh token value for user {self.user}. Expires at: {self.expires_at}>'
+
 class UserProfile(db.Model):
     __tablename__ = 'user_profiles'
 
@@ -56,8 +86,10 @@ class RiskCategory(db.Model):
     __tablename__ = 'risk_categories'
 
     category_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    category_name: Mapped[RiskLevel] = mapped_column(Enum(RiskLevel), unique=True)
+    category_name: Mapped[RiskCat] = mapped_column(Enum(RiskCat), unique=True)
+    category_name_ar: Mapped[RiskCatAr] = mapped_column(Enum(RiskCatAr), unique=True)
     description: Mapped[str] = mapped_column(Text, unique=True)
+    description_ar: Mapped[str] = mapped_column(Text, unique=True)
     min_score: Mapped[int] = mapped_column(Integer, unique=True)
     max_score: Mapped[int] = mapped_column(Integer, unique=True)
 
@@ -87,8 +119,9 @@ class Question(db.Model):
     __tablename__ = 'questions'
 
     question_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    question_number: Mapped[int] = mapped_column(Integer, unique=True)
+    question_number: Mapped[int] = mapped_column(Integer)
     question_text: Mapped[str] = mapped_column(Text, unique=True)
+    question_text_ar: Mapped[str] = mapped_column(Text, unique=True)
     question_type: Mapped[QuestionType] = mapped_column(Enum(QuestionType))
 
     options: Mapped[List['Option']] = relationship('Option', back_populates='question')
@@ -102,8 +135,9 @@ class Option(db.Model):
 
     option_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     question_id: Mapped[int] = mapped_column(Integer, ForeignKey('questions.question_id'))
-    option_number: Mapped[str] = mapped_column(String(10))
+    option_number: Mapped[int] = mapped_column(Integer)
     option_text: Mapped[str] = mapped_column(Text)
+    option_text_ar: Mapped[str] = mapped_column(Text)
     weight: Mapped[float] = mapped_column(Float)
 
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='option')
@@ -136,7 +170,9 @@ class Sector(db.Model):
 
     sector_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     sector_name: Mapped[str] = mapped_column(String(100), unique=True)
+    sector_name_ar: Mapped[str] = mapped_column(String(100), unique=True)
     description: Mapped[str] = mapped_column(Text)
+    description_ar: Mapped[str] = mapped_column(Text)
 
     stocks: Mapped[List['Stock']] = relationship('Stock', back_populates='sector')
 
@@ -149,9 +185,12 @@ class Stock(db.Model):
     stock_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     ticker_symbol: Mapped[str] = mapped_column(String(10), unique=True)
     company_name: Mapped[str] = mapped_column(String(255))
+    company_name_ar: Mapped[str] = mapped_column(String(255))
     sector_id: Mapped[int] = mapped_column(Integer, ForeignKey('sectors.sector_id'))
     description: Mapped[str] = mapped_column(Text)
+    description_ar: Mapped[str] = mapped_column(Text)
     risk_level: Mapped[RiskLevel] = mapped_column(Enum(RiskLevel))
+    risk_level_ar: Mapped[RiskLevelAr] = mapped_column(Enum(RiskLevelAr))
 
     stock_prices: Mapped[List['StockPrice']] = relationship('StockPrice', back_populates='stock')
     predictions: Mapped[List['Prediction']] = relationship('Prediction', back_populates='stock')
@@ -220,4 +259,4 @@ class Recommendation(db.Model):
     stock: Mapped['Stock'] = relationship('Stock', back_populates='recommendations')
 
     def __repr__(self):
-        return f'<Recommendation rank {self.rank} in set {self.set_id}: stock {self.stock_id}>'
+        return f'<Recommendation rank {self.rank} in set {self.recommendation_set_id}: stock {self.stock_id}>'

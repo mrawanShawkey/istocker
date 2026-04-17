@@ -1,12 +1,12 @@
-﻿sector_name,description
-Banks,Includes commercial and investment banks licensed by the Central Bank of Egypt to provide retail and corporate banking services.
-Basic Resources,"Focuses on companies involved in the extraction or primary processing of raw materials, such as fertilizers, chemicals, steel, and aluminum."
-Education Services,"Companies providing private educational infrastructure, ranging from K-12 schools to higher education and vocational training."
-Energy & Support Services,"Comprises businesses in the oil and gas value chain, including refining, mineral oil production, and drilling support."
-"Food, Beverages and Tobacco","Includes manufacturers of dairy, juices, and snacks, as well as agricultural producers (sugar) and tobacco manufacturers."
-Health Care & Pharmaceuticals,"Consists of pharmaceutical manufacturers, medical distributors, and private hospital/diagnostic service providers."
-"IT, Media & Communication Services","Includes telecommunications operators, digital infrastructure developers, and media production companies."
-"Industrial Goods, Services, and Automobiles","A broad sector for companies manufacturing diverse industrial products (cables, electronics) and related international trade services."
-Non-bank Financial Services,"Covers investment firms, fintech/payment platforms, insurance, and brokerage holdings."
-Real Estate,"Focused on land development, residential communities, luxury hospitality, and urban housing projects."
-Textile & Durables,"Includes manufacturers of consumer-facing durable goods, most notably the world-leading Egyptian carpet and rug industry."
+﻿sector_name,sector_name_ar,description,description_ar
+Banks,البنوك,Includes commercial and investment banks licensed by the Central Bank of Egypt to provide retail and corporate banking services.,يشمل البنوك التجارية والاستثمارية المرخصة من البنك المركزي المصري لتقديم الخدمات المصرفية للأفراد والشركات.
+Basic Resources,الموارد الأساسية,"Focuses on companies involved in the extraction or primary processing of raw materials, such as fertilizers, chemicals, steel, and aluminum.",يركز على الشركات العاملة في استخراج أو المعالجة الأولية للمواد الخام مثل الأسمدة والكيماويات والحديد والألومنيوم.
+Education Services,خدمات التعليم,"Companies providing private educational infrastructure, ranging from K-12 schools to higher education and vocational training.",شركات تقدم خدمات البنية التعليمية الخاصة بدءًا من التعليم قبل الجامعي وحتى التعليم العالي والتدريب المهني.
+Energy & Support Services,الطاقة وخدمات الدعم,"Comprises businesses in the oil and gas value chain, including refining, mineral oil production, and drilling support.",يتضمن الشركات العاملة في سلسلة قيمة النفط والغاز بما في ذلك التكرير وإنتاج الزيوت المعدنية وخدمات دعم الحفر.
+"Food, Beverages and Tobacco",الأغذية والمشروبات والتبغ,"Includes manufacturers of dairy, juices, and snacks, as well as agricultural producers (sugar) and tobacco manufacturers.","يشمل شركات تصنيع الألبان والعصائر والوجبات الخفيفة، بالإضافة إلى المنتجات الزراعية (السكر) وتصنيع التبغ."
+Health Care & Pharmaceuticals,الرعاية الصحية والأدوية,"Consists of pharmaceutical manufacturers, medical distributors, and private hospital/diagnostic service providers.",يضم شركات تصنيع الأدوية وتوزيع المستلزمات الطبية والمستشفيات الخاصة وخدمات التشخيص.
+"IT, Media & Communication Services",تكنولوجيا المعلومات والإعلام وخدمات الاتصالات,"Includes telecommunications operators, digital infrastructure developers, and media production companies.",يشمل شركات الاتصالات ومطوري البنية التحتية الرقمية وشركات إنتاج المحتوى الإعلامي.
+"Industrial Goods, Services, and Automobiles",السلع الصناعية والخدمات والسيارات,"A broad sector for companies manufacturing diverse industrial products (cables, electronics) and related international trade services.",قطاع واسع يضم الشركات التي تصنع منتجات صناعية متنوعة (مثل الكابلات والإلكترونيات) وخدمات التجارة الدولية المرتبطة بها.
+Non-bank Financial Services,الخدمات المالية غير المصرفية,"Covers investment firms, fintech/payment platforms, insurance, and brokerage holdings.",يغطي شركات الاستثمار والتكنولوجيا المالية (Fintech) والتأمين وشركات الوساطة المالية.
+Real Estate,العقارات,"Focused on land development, residential communities, luxury hospitality, and urban housing projects.",يركز على تطوير الأراضي والمجتمعات السكنية والمشاريع الفندقية الفاخرة والمشروعات العمرانية.
+Textile & Durables,المنسوجات والسلع المعمرة,"Includes manufacturers of consumer-facing durable goods, most notably the world-leading Egyptian carpet and rug industry.","يشمل شركات تصنيع السلع الاستهلاكية المعمرة، وأبرزها صناعة السجاد المصرية الرائدة عالميًا."
