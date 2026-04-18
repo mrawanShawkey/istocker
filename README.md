@@ -166,3 +166,9 @@ Automated tests for:
 
 ```bash
 conda env create -f environment.yml
+
+### 1️⃣ Initialize, migrate, upgrade, and seed database with required data
+
+```bash
+python setup.py #creates instance folder with a database instance filled with required data
+# To delete data from database for testing purposes, use 'flask clear'

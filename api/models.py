@@ -86,8 +86,8 @@ class RiskCategory(db.Model):
     __tablename__ = 'risk_categories'
 
     category_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    category_name: Mapped[RiskCat] = mapped_column(Enum(RiskCat), unique=True)
-    category_name_ar: Mapped[RiskCatAr] = mapped_column(Enum(RiskCatAr), unique=True)
+    category_name: Mapped[RiskCat] = mapped_column(Enum(RiskCat, values_callable=lambda x: [e.value for e in x]), unique=True)
+    category_name_ar: Mapped[RiskCatAr] = mapped_column(Enum(RiskCatAr, values_callable=lambda x: [e.value for e in x]), unique=True)
     description: Mapped[str] = mapped_column(Text, unique=True)
     description_ar: Mapped[str] = mapped_column(Text, unique=True)
     min_score: Mapped[int] = mapped_column(Integer, unique=True)
@@ -122,7 +122,7 @@ class Question(db.Model):
     question_number: Mapped[int] = mapped_column(Integer)
     question_text: Mapped[str] = mapped_column(Text, unique=True)
     question_text_ar: Mapped[str] = mapped_column(Text, unique=True)
-    question_type: Mapped[QuestionType] = mapped_column(Enum(QuestionType))
+    question_type: Mapped[QuestionType] = mapped_column(Enum(QuestionType, values_callable=lambda x: [e.value for e in x]))
 
     options: Mapped[List['Option']] = relationship('Option', back_populates='question')
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='question')
@@ -189,8 +189,8 @@ class Stock(db.Model):
     sector_id: Mapped[int] = mapped_column(Integer, ForeignKey('sectors.sector_id'))
     description: Mapped[str] = mapped_column(Text)
     description_ar: Mapped[str] = mapped_column(Text)
-    risk_level: Mapped[RiskLevel] = mapped_column(Enum(RiskLevel))
-    risk_level_ar: Mapped[RiskLevelAr] = mapped_column(Enum(RiskLevelAr))
+    risk_level: Mapped[RiskLevel] = mapped_column(Enum(RiskLevel, values_callable=lambda x: [e.value for e in x]))
+    risk_level_ar: Mapped[RiskLevelAr] = mapped_column(Enum(RiskLevelAr, values_callable=lambda x: [e.value for e in x]))
 
     stock_prices: Mapped[List['StockPrice']] = relationship('StockPrice', back_populates='stock')
     predictions: Mapped[List['Prediction']] = relationship('Prediction', back_populates='stock')
@@ -237,7 +237,7 @@ class RecommendationSet(db.Model):
     __tablename__ = 'recommendation_sets'
 
     set_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    risk_category: Mapped[RiskCat] = mapped_column(Enum(RiskCat))
+    risk_category: Mapped[RiskCat] = mapped_column(Enum(RiskCat, values_callable=lambda x: [e.value for e in x]))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     recommendations: Mapped[List['Recommendation']] = relationship('Recommendation', back_populates='recommendation_set')

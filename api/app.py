@@ -20,7 +20,8 @@ def create_app():
 
     migrate = Migrate(app, db)
 
-    from api.seed import seed
+    from api.seed import seed, clear
     app.cli.command('seed')(seed)
+    app.cli.command('clear')(clear)
 
     return app
