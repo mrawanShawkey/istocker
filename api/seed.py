@@ -41,39 +41,39 @@ def seed():
         print('Risk categories seeded.')
 
 
-    # #Question
-    # if Question.query.first():
-    #    print('Questions already seeded.')
-    # else:
-    #     questions_df = pd.read_csv(QUESTIONS)
-    #     for _, row in questions_df.iterrows():
-    #         question = Question(
-    #             question_number = row['question_number'],
-    #             question_text = row['question_text'],
-    #             question_text_ar = row['question_text_ar'],
-    #             question_type = QuestionType(row['question_type'])
-    #         )
-    #         db.session.add(question)
-    #     db.session.commit()
-    #     print('Questions seeded.')
+    #Question
+    if Question.query.first():
+       print('Questions already seeded.')
+    else:
+        questions_df = pd.read_csv(QUESTIONS)
+        for _, row in questions_df.iterrows():
+            question = Question(
+                question_number = row['question_number'],
+                question_text = row['question_text'],
+                question_text_ar = row['question_text_ar'],
+                question_type = QuestionType(row['question_type'])
+            )
+            db.session.add(question)
+        db.session.commit()
+        print('Questions seeded.')
 
 
-    #Option
-    # if Option.query.first():
-    #    print('Options already seeded.')
-    # else:
-    #     options_df = pd.read_csv(OPTIONS)
-    #     for _, row in options_df.iterrows():
-    #         option = Option(
-    #             question_id = row['question_id'],
-    #             option_number = row['option_number'],
-    #             option_text = row['option_text'],
-    #             option_text_ar = row['option_text_ar'],
-    #             weight = row['weight']
-    #         )
-    #         db.session.add(option)
-    #     db.session.commit()
-    #     print('Options seeded.')
+    Option
+    if Option.query.first():
+       print('Options already seeded.')
+    else:
+        options_df = pd.read_csv(OPTIONS)
+        for _, row in options_df.iterrows():
+            option = Option(
+                question_id = row['question_id'],
+                option_number = row['option_number'],
+                option_text = row['option_text'],
+                option_text_ar = row['option_text_ar'],
+                weight = row['weight']
+            )
+            db.session.add(option)
+        db.session.commit()
+        print('Options seeded.')
 
 
     #Sector

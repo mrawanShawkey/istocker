@@ -1,2 +1,3 @@
+FLASK_APP=api/run.py
 DATABASE_URL=''
 SECRET_KEY=''
