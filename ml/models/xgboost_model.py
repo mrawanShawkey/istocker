@@ -3,22 +3,28 @@ import numpy as np
 
 class XGBoostModel:
 
-    def __init__(self):
-        self.model = XGBRegressor(
-            n_estimators=500,        # early stopping will find real cutoff
-            max_depth=3,             # reduced from 4 — less overfit on small N
-            learning_rate=0.03,      # slower learning → better generalization
-            subsample=0.7,
-            colsample_bytree=0.7,
-            reg_alpha=0.1,           # L1 sparsity
-            reg_lambda=2.0,          # L2 shrinkage
-            min_child_weight=5,      # prevents splits on tiny leaf groups
-            random_state=42,
-            eval_metric="rmse",
-            early_stopping_rounds=30
-        )
-        self.is_fitted = False
+    def __init__(self,params=None):
 
+        default_params = {
+            "n_estimators": 500,
+            "max_depth": 3,
+            "learning_rate": 0.03,
+            "subsample": 0.7,
+            "colsample_bytree": 0.7,
+            "reg_alpha": 0.1,
+            "reg_lambda": 1.0,
+            "min_child_weight": 5,
+            "random_state": 42,
+            "eval_metric": "rmse",
+            "early_stopping_rounds": 30
+        }
+
+        if params:
+            default_params.update(params)
+
+        self.model = XGBRegressor(**default_params)
+        self.is_fitted = False
+    
     def fit(self, X, y):
         if hasattr(X, "columns") and "symbol" in X.columns:
             X = X.drop(columns=["symbol"])
