@@ -31,11 +31,12 @@ dependencies:
       - contourpy==1.3.2
       - curl-cffi==0.13.0
       - fonttools==4.61.1
-      - flask==3.1.3 #nour
-      - flask-sqlalchemy==3.1.1 #nour
-      - flask-migrate==4.1.0 #nour
+      - flask==3.1.3
+      - flask-sqlalchemy==3.1.1
+      - flask-migrate==4.1.0
       - flask-login==0.6.3
       - flask-bcrypt==1.0.1
+      - flask-scheduler==0.0.51
       - frozendict==2.4.7
       - idna==3.11
       - multitasking==0.0.12
