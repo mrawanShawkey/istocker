@@ -1,0 +1,48 @@
+{
+  "features": [
+    "atr_14",
+    "exchange_rate",
+    "gdp",
+    "inflation_rate",
+    "interest_rate",
+    "ma_60_slope",
+    "macro_year",
+    "mom60_x_vol20",
+    "mom_126",
+    "mom_252",
+    "month",
+    "price_to_ma252",
+    "realized_vol_20",
+    "unemployment_rate",
+    "vol_60",
+    "volume"
+  ],
+  "medians": {
+    "atr_14": 0.2064285714285715,
+    "exchange_rate": 10.0254007885465,
+    "gdp": 10.4,
+    "inflation_rate": 0.109,
+    "interest_rate": 0.0925,
+    "ma_60_slope": 0.0061944446666668,
+    "macro_year": 2016.0,
+    "mom60_x_vol20": 0.0002761201854505,
+    "mom_126": 0.0400721393434989,
+    "mom_252": 0.083460314329762,
+    "month": 7.0,
+    "price_to_ma252": 1.0341032735412068,
+    "realized_vol_20": 0.0931327788752596,
+    "unemployment_rate": 9.1,
+    "vol_60": 0.022233926264153,
+    "volume": 896641.0
+  },
+  "n_estimators": 300,
+  "params": {
+    "max_depth": 3,
+    "learning_rate": 0.03,
+    "subsample": 0.7,
+    "colsample_bytree": 0.7,
+    "reg_alpha": 0.1,
+    "reg_lambda": 1.0,
+    "min_child_weight": 5
+  }
+}

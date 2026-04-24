@@ -31,6 +31,11 @@ CLEAN_MARKET_DATA_WITH_MACRO = PROCESSED_DIR / "egx30_with_macro.csv"
 MODELING_DATASET_FILE = ML_DIR / "datasets" / "EGX30_modeling_dataset.csv"
 
 # -------------------------
+# Model Files
+# -------------------------
+XGB_MODEL = WALKFORWARD_RESULTS_DIR /"xgboost_production.pkl"
+
+# -------------------------
 # ML Datasets 
 # -------------------------
 FEATURES_DIR = ML_DIR / "features"

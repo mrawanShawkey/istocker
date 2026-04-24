@@ -63,7 +63,7 @@ for ticker in egx30_tickers:
 
 
     def fetch_with_retries(tickers, n_bars=5000, retries=3, delay_between_attempts=3, post_delay=2):
-        """Attempt to fetch tickers with retry logic and reconnect on failure."""
+        """ Attempt to fetch tickers with retry logic and reconnect on failure."""
         for ticker in tickers:
             print(f"Fetching data with retries: {ticker} ...")
             success = False
@@ -126,7 +126,7 @@ for ticker in egx30_tickers:
 
     def collect_and_combine(output_file= MARKET_DIR / 'raw' /"EGX30_Full_Dataset_Ready.csv"):
         """Read all *_TV_Data.csv files, normalize and combine them into one dataset."""
-        print("Collecting files... ⏳")
+        print("Collecting files... ")
         all_files = glob.glob(str(MARKET_DIR / 'raw' / "*_TV_Data.csv"))
         df_list = []
         companies_added = 0

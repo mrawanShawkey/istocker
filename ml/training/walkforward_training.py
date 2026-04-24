@@ -31,6 +31,7 @@ walkforward_training.py
 import pandas as pd
 import numpy as np
 import json
+import joblib
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
@@ -169,7 +170,9 @@ class WalkForwardTraining:
             # ---------------------------------------------------------
             # Feature selection (cached)
             # ---------------------------------------------------------
+            print("selecting features...")
             fold_key       = fold_id + 1
+            print("fold keys", fold_key)
             cached_features = load_features(fold_key)
 
             if cached_features is None:
