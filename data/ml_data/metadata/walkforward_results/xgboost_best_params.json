@@ -1,0 +1,13 @@
+{
+  "max_depth": 3,
+  "learning_rate": 0.08927180304353628,
+  "subsample": 0.7927975767245621,
+  "colsample_bytree": 0.7394633936788146,
+  "reg_alpha": 0.02636875533972305,
+  "reg_lambda": 0.18408992080552522,
+  "min_child_weight": 3,
+  "n_estimators": 500,
+  "random_state": 42,
+  "eval_metric": "rmse",
+  "early_stopping_rounds": 30
+}

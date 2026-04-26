@@ -45,6 +45,7 @@ WALKFORWARD_RESULTS_DIR = ML_DIR / "metadata" / "walkforward_results"
 WALKFORWARD_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "walkforward_results.csv"
 LSTM_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "lstm_results.csv"
 XGBOOST_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "xgboost_results.csv"  
+SARIMAX_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "sarimax_results.csv"
 
 # -------------------------
 # Model Comparison Results
