@@ -30,10 +30,6 @@ MACRO_DATA = RAW_DIR / "Egypt_Economic_Data.xlsx"
 CLEAN_MARKET_DATA_WITH_MACRO = PROCESSED_DIR / "egx30_with_macro.csv"
 MODELING_DATASET_FILE = ML_DIR / "datasets" / "EGX30_modeling_dataset.csv"
 
-# -------------------------
-# Model Files
-# -------------------------
-XGB_MODEL = WALKFORWARD_RESULTS_DIR /"xgboost_production.pkl"
 
 # -------------------------
 # ML Datasets 
@@ -51,6 +47,12 @@ WALKFORWARD_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "walkforward_results.csv"
 LSTM_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "lstm_results.csv"
 XGBOOST_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "xgboost_results.csv"  
 SARIMAX_RESULTS_FILE = WALKFORWARD_RESULTS_DIR / "sarimax_results.csv"
+
+# -------------------------
+# Model Files
+# -------------------------
+XGB_MODEL = WALKFORWARD_RESULTS_DIR /"xgboost_production.pkl"
+XGB_MODEL_META = WALKFORWARD_RESULTS_DIR / "xgboost_production_meta.json"
 
 # -------------------------
 # Model Comparison Results

@@ -1,5 +1,11 @@
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
+import joblib
+import json
+import numpy as np
+import pandas as pd 
+
+from config.paths import XGB_MODEL, XGB_MODEL_META
 
 import preprocessing.market_processing.fetch_market_data as Extract
 from preprocessing.market_processing.data_cleaning import MarketDataCleaner
@@ -20,10 +26,38 @@ def daily_market_update(day):
     
 def daily_predictions():
     daily_market_update(today)
-    print('Starting deily predictions...')
+    print('Starting daily predictions...')
     today_data = StockPrice.query.filter_by(date=today).all()
+    if not today_data:
+        return print("No data for today")
     predictions = []
-    # call model when ready, pass today_data, store in predictions
+
+    #load model and meta
+    model = joblib.load(XGB_MODEL)
+    with open(XGB_MODEL_META, "r") as f:
+        meta = json.load(f)
+
+    features = meta["features"]
+    medians  = pd.Series(meta["medians"])
+
+    #convert db to pandas rows 
+    rows = [{
+        col: getattr(row, col)
+        for col in features + ["symbol"]
+        if hasattr(row, col)
+    } for row in today_data]
+
+    df = pd.DataFrame(rows)
+
+    X = df[features].copy()
+    X = X.replace([np.inf, -np.inf], np.nan)
+    X = X.fillna(medians)
+    X = X.values.astype(np.float32)
+
+    raw_preds = model.predict(X)
+
+    # TODO: store predictions in db
+
     db.session.add_all(predictions)
     db.session.commit()
     return print(f'Today\'s predictions: {predictions}')
