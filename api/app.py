@@ -4,19 +4,25 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from api.config import Config
+from api.auth.routes import auth
+from api.market.routes import market
+from api.me.routes import me
+from api.questions.routes import questions
 
 class Base(DeclarativeBase):
     pass
 db = SQLAlchemy(model_class=Base)
 
 def create_app():
-    app = Flask(__name__, template_folder='templates')
+    app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
-
-    from api.routes import register_routes
-    register_routes(app, db)
+    
+    app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(market, url_prefix='/market')
+    app.register_blueprint(me, url_prefix='/me')
+    app.register_blueprint(questions, url_prefix='/questions')
 
     migrate = Migrate(app, db)
 

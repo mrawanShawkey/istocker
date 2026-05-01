@@ -55,9 +55,7 @@ def daily_predictions():
     X = X.values.astype(np.float32)
 
     raw_preds = model.predict(X)
-
-    # TODO: store predictions in db
-
+    
     db.session.add_all(predictions)
     db.session.commit()
     return print(f'Today\'s predictions: {predictions}')
