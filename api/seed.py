@@ -14,7 +14,7 @@ def seed():
             RiskCategory(
                 category_name=RiskCat.CONSERVATIVE, 
                 category_name_ar=RiskCatAr.CONSERVATIVE, 
-                description='You are a Conservative investor. You prioritize capital preservation above all else, and prefer stable, well-established companies with predictable returns. You tend to accept lower yields in exchange for reduced risk and are most comfortable holding positions in blue-chip stocks with strong fundamentals and a consistent dividend history.', 
+                description='You are a conservative investor. You prioritize capital preservation above all else, and prefer stable, well-established companies with predictable returns. You tend to accept lower yields in exchange for reduced risk and are most comfortable holding positions in blue-chip stocks with strong fundamentals and a consistent dividend history.', 
                 description_ar='أنت مستثمر متحفظ. تضع الحفاظ على رأس المال فوق كل اعتبار، وتفضل الشركات المستقرة والراسخة ذات العوائد المتوقعة. تميل إلى قبول عوائد أقل مقابل تقليل المخاطر، وتشعر براحة أكبر في الاحتفاظ بمراكز في الأسهم القيادية ذات الأسس القوية وتاريخ توزيع أرباح ثابت.', 
                 min_score=0, 
                 max_score=33
@@ -22,16 +22,16 @@ def seed():
             RiskCategory(
                 category_name=RiskCat.MODERATE, 
                 category_name_ar=RiskCatAr.MODERATE, 
-                description='You are a Moderate investor. You seek a balance between growth and stability, and are comfortable accepting some market fluctuation in pursuit of reasonable returns. You tend to diversify across sectors and prefer companies with solid financials and a credible growth story — neither the most defensive nor the most speculative names on the market.', 
-                description_ar='أنت مستثمر معتدل. تسعى لتحقيق التوازن بين النمو والاستقرار، وتتقبل بعض تقلبات السوق في سبيل الحصول على عوائد معقولة. تميل إلى التنويع عبر القطاعات وتفضل الشركات ذات الملاءة المالية القوية وقصة نمو موثوقة — لست منحازاً للأسهم الدفاعية البحتة ولا للأسهم المضاربة.', 
+                description='You are a moderate investor. You seek a balance between growth and stability and are comfortable accepting some market fluctuation in pursuit of reasonable returns. You tend to diversify across sectors and prefer companies with solid financials and a credible growth story.', 
+                description_ar='أنت مستثمر معتدل. تسعى لتحقيق التوازن بين النمو والاستقرار، وتتقبل بعض تقلبات السوق في سبيل الحصول على عوائد معقولة. تميل إلى التنويع عبر القطاعات وتفضل الشركات ذات الملاءة المالية القوية وقصة نمو موثوقة.', 
                 min_score=34, 
                 max_score=66
             ),
             RiskCategory(
                 category_name=RiskCat.AGGRESSIVE, 
                 category_name_ar=RiskCatAr.AGGRESSIVE, 
-                description='You are an Aggressive investor. You prioritize high growth potential and are willing to tolerate significant short-term volatility to achieve above-average returns. You tend to gravitate toward high-momentum stocks, emerging opportunities, and companies with disruptive potential — understanding that higher reward comes with higher risk.', 
-                description_ar='أنت مستثمر جريء. تعطي الأولوية لإمكانيات النمو العالية ولديك استعداد لتحمل تقلبات قوية قصيرة المدى لتحقيق عوائد أعلى من المتوسط. تميل إلى الانجذاب نحو الأسهم ذات الزخم العالي، والفرص الناشئة، والشركات ذات الإمكانيات الابتكارية — مدركاً أن المكافآت الأعلى تأتي مع مخاطر أعلى.', 
+                description='You are an aggressive investor. You prioritize high growth potential and are willing to tolerate significant short-term volatility to achieve above-average returns. You tend to gravitate toward high-momentum stocks, emerging opportunities, and companies with disruptive potential, understanding that higher reward comes with higher risk.', 
+                description_ar='أنت مستثمر جريء. تعطي الأولوية لإمكانيات النمو العالية ولديك استعداد لتحمل تقلبات قوية قصيرة المدى لتحقيق عوائد أعلى من المتوسط. تميل إلى الانجذاب نحو الأسهم ذات الزخم العالي، والفرص الناشئة، والشركات ذات الإمكانيات الابتكارية، مدركاً أن المكافآت الأعلى تأتي مع مخاطر أعلى.', 
                 min_score=67, 
                 max_score=100
             )

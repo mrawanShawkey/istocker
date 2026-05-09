@@ -1,35 +1,70 @@
-from flask import request
+from flask import request, jsonify
 from flask_jwt_extended import get_jwt
 import auth.services as Services
 import auth.utils as Utils
 
 def register():
-    data = request.get_json()
-    return Services.register(data['firstName'], data['lastName'], data['email'], data['password'])
+    try:
+        payload = request.get_json()
+        Services.register(payload)
+    except:
+        pass
 
 def login():
-    data = request.get_json()
-    return Services.login(data['email'], data['password'])
+    try:
+        payload = request.get_json()
+        Services.login(payload)
+    except:
+        pass
 
 def refresh():
-    data = request.get_json()
-    return Services.refresh(data['refreshToken'])
+    try:
+        payload = request.get_json()
+        Services.refresh(payload)
+    except: 
+        pass
 
 def change_email():
-    user_access_token = Utils.get_user_token(request.headers) #implement
-    data = request.get_json()
-    return Services.change_email(data['oldEmail'], data['password'], data['newEmail'])
+    try:
+        user_access_token = Utils.get_user_token(request.headers)
+        payload = request.get_json()
+        Services.change_email(payload)
+    except:
+        pass
 
 def change_password():
-    user_access_token = Utils.get_user_token(request.headers)
-    data = request.get_json()
-    return Services.change_password(data['oldPassword'], data['newPassword'])
+    try:
+        user_access_token = Utils.get_user_token(request.headers)
+        payload = request.get_json()
+        Services.change_password(payload)
+    except:
+        pass
+
+def forgot_password():
+    try:
+        payload = request.get_json()
+        Services.forgot_password(payload)
+    except:
+        pass
+
+def reset_password():
+    try:
+        payload = request.get_json()
+        Services.reset_password(payload)
+    except:
+        pass
 
 def logout():
-    user_access_token = Utils.get_user_token(request.headers)
-    data = request.get_json()
-    return Services.logout()
+    try:
+        user_access_token = Utils.get_user_token(request.headers)
+        payload = request.get_json()
+        Services.logout(payload)
+    except:
+        pass
 
 def delete_account():
-    user_access_token = Utils.get_user_token(request.headers)
-    return Services.delete_account()
+    try:
+        user_access_token = Utils.get_user_token(request.headers)
+        Services.delete_account()
+    except:
+        pass

@@ -36,6 +36,7 @@ dependencies:
       - flask-migrate==4.1.0
       - flask-login==0.6.3
       - flask-bcrypt==1.0.1
+      - flask-jwt-extended==4.7.1
       - flask-scheduler==0.0.51
       - frozendict==2.4.7
       - idna==3.11

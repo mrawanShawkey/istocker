@@ -1,22 +1,28 @@
 from flask import jsonify
 import api.repositories as Repos
 
-def register(first_name, last_name, email, password):
+def register(payload):
     pass
 
-def login(email, password):
+def login(payload):
     pass
 
-def refresh(refresh_token):
+def refresh(payload):
     pass
 
-def change_email(old_email, password, new_email):
+def change_email(payload):
     pass
 
-def change_password(old_password, new_password):
+def change_password(payload):
     pass
 
-def logout():
+def forgot_password(payload):
+    pass
+
+def reset_password(payload):
+    pass
+
+def logout(payload):
     pass
 
 def delete_account():

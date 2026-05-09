@@ -23,6 +23,14 @@ def change_email():
 def change_password():
     return Controllers.change_password()
 
+@auth.route('/forgot-password', methods = ['POST'])
+def forgot_password():
+    return Controllers.forgot_password()
+
+@auth.route('/reset-password', methods = ['POST'])
+def reset_password():
+    return Controllers.reset_password()
+
 @auth.route('/logout', methods=['POST'])
 def logout():
     return Controllers.logout()
