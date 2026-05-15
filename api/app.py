@@ -4,10 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from api.config import Config
-from api.auth.routes import auth
-from api.market.routes import market
-from api.me.routes import me
-from api.questions.routes import questions
+from api.auth.controllers import auth
+from api.market.controllers import market
+from api.me.controllers import me
+from api.questions.controllers import questions
 from api.common.errors.app_errors import AppErrors
 from api.common.errors.error_handler import handle_error
 
