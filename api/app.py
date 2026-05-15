@@ -8,6 +8,8 @@ from api.auth.routes import auth
 from api.market.routes import market
 from api.me.routes import me
 from api.questions.routes import questions
+from api.common.errors.app_errors import AppErrors
+from api.common.errors.error_handler import handle_error
 
 class Base(DeclarativeBase):
     pass
@@ -23,6 +25,7 @@ def create_app():
     app.register_blueprint(market, url_prefix='/market')
     app.register_blueprint(me, url_prefix='/me')
     app.register_blueprint(questions, url_prefix='/questions')
+    app.register_error_handler(AppErrors, handle_error)
 
     migrate = Migrate(app, db)
 
