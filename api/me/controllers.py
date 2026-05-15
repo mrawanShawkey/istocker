@@ -2,8 +2,7 @@ from flask import Blueprint, request, jsonify
 import me.services as Services
 from api.common.utils import token_required
 import api.common.utils as Utils
-import me.utils as Me_Utils
-import me.errors as Errors
+import api.common.errors.errors as Errors
 
 me = Blueprint('me', __name__)
 

@@ -9,15 +9,15 @@ def handle_error(err):
 
     if (err.isOperational):
         response = {
-            "success": False,
-            "code": code,
-            "message": message 
+            'success': False,
+            'code': code,
+            'message': message 
         }
     else:
         status_code = 500
         response = {
-            "success": False,
-            "code": code,
-            "message": message
+            'success': False,
+            'code': code,
+            'message': message
         }
-    return response, err.status_code
+    return jsonify(response), err.status_code

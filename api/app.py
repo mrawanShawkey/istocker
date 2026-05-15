@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from api.config import Config
+from api.common.extentions.extentions import bcrypt, jwt
 from api.auth.controllers import auth
 from api.market.controllers import market
 from api.me.controllers import me
@@ -20,7 +21,9 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
-    
+    bcrypt.init(app)
+    jwt.init(app)
+
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(market, url_prefix='/market')
     app.register_blueprint(me, url_prefix='/me')
