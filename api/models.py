@@ -5,7 +5,6 @@ from enum import Enum as PyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, BigInteger, Float, Numeric, Boolean, Text, DateTime, Date, JSON, ForeignKey, Enum
 from typing import Optional, List
-from flask_login import UserMixin
 
 # Enum Classes
 class RiskCat(PyEnum):
@@ -33,7 +32,7 @@ class QuestionType(PyEnum):
     QUESTIONNAIRE = 'Questionnaire'
 
 # Models
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'users'
 
     user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
