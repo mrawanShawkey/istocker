@@ -14,7 +14,7 @@ def get_market_data():
     return jsonify(response), 200
 
 @market.route('/<string:ticker>')
-def get_market_by_ticker(ticker):
+def get_ticker_data(ticker):
     data = Services.get_market_data_by_ticker(ticker)
     response = {
         "success": True,
