@@ -1,4 +1,4 @@
-from api.app import db
+from api.common.extentions.extentions import db
 from datetime import date as date_type, datetime, timezone, timedelta
 from decimal import Decimal
 from enum import Enum as PyEnum

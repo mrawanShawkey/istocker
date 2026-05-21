@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-import questions.services as Services
+import api.questions.services as Services
 import api.common.errors.errors as Errors
 
 questions = Blueprint('questions', __name__)
 
 @questions.route('/')
+@jwt_required()
 def get_questions():
     type = request.args.get('type')
     if not type:
@@ -19,6 +20,7 @@ def get_questions():
     return jsonify(response), 200
 
 @questions.route('/responses', methods=['POST'])
+@jwt_required()
 def submit_responses():
     type = request.args.get('type')
     if not type:
@@ -40,10 +42,10 @@ def submit_responses():
 @jwt_required()
 def edit_responses():
     payload = request.get_json()
-    Services.edit_responses(payload)
+    data = Services.edit_responses(payload)
     response = {
         'success': True,
-        'data': None,
+        'data': data,
         'message': 'Responses updated.'
     }
     return jsonify(response), 200

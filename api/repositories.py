@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from api.models import *
-from app import db
+from api.app import db
+import api.common.errors.errors as Errors
 
 # Auth
 def create_user():
@@ -44,7 +45,6 @@ def get_price_difference(ticker): #float
         return last_price - second_to_last
     return 0.0
     
-
 def get_month_prices(ticker): #dict
     stmt = (
         db.select(StockPrice.date, StockPrice.close_price)
@@ -57,30 +57,41 @@ def get_month_prices(ticker): #dict
     prices = {row.date.isoformat(): row.close_price for row in rows}
     return prices
 
-def get_stock_info(ticker): #dict
+def ticker_exists(ticker):
     stmt = (
-        db.select(Stock.stock_id, Stock.ticker_symbol, Stock.company_name, Stock.company_name_ar, Sector.sector_name, Sector.sector_name_ar, Stock.description, Stock.description_ar)
-        .join(Sector, Stock.sector_id == Sector.sector_id)
+        db.select(Stock.ticker_symbol)
         .where(Stock.ticker_symbol == ticker)
     )
-    stock_info = db.session.execute(stmt)
-    row = stock_info.first()
-    if row:
-        return {
-            "stockId": row.stock_id,
-            "ticker": row.ticker_symbol,
-            "stockName": row.company_name,
-            "stockNameAr": row.company_name_ar,
-            "sector": row.sector_name,
-            "sectorAr": row.sector_name_ar,
-            "description": row.description,
-            "descriptionAr": row.description_ar
-        }
-    return None
+    ticker = db.session.execute(stmt).scalar_one_or_none()
+    if not ticker:
+        raise Errors.TickerNotFound
+    return True
+
+def get_stock_info(ticker): #dict
+    if ticker_exists(ticker):
+        stmt = (
+            db.select(Stock.stock_id, Stock.ticker_symbol, Stock.company_name, Stock.company_name_ar, Sector.sector_name, Sector.sector_name_ar, Stock.description, Stock.description_ar)
+            .join(Sector, Stock.sector_id == Sector.sector_id)
+            .where(Stock.ticker_symbol == ticker)
+        )
+        stock_info = db.session.execute(stmt)
+        row = stock_info.first()
+        if row:
+            return {
+                "stockId": row.stock_id,
+                "ticker": row.ticker_symbol,
+                "stockName": row.company_name,
+                "stockNameAr": row.company_name_ar,
+                "sector": row.sector_name,
+                "sectorAr": row.sector_name_ar,
+                "description": row.description,
+                "descriptionAr": row.description_ar
+            }
+        raise Errors.MarketDataUnavailable
 
 def get_top_movers(): #list of dicts
     stmt = (
-        db.select(Stock.ticker_symbol, Stock.stock_name, Stock.stock_name_ar)
+        db.select(Stock.ticker_symbol, Stock.company_name, Stock.company_name_ar)
         .join(StockPrice, Stock.stock_id == StockPrice.stock_id)
         .where()
         .limit(5)
@@ -101,3 +112,11 @@ def get_top_sectors(): #list of dicts
 
 
 # Questions
+def get_registration_q_and_r():
+    pass
+
+def get_questionnaire_q_and_r():
+    pass
+
+def submit_registration_responses():
+    pass

@@ -1,0 +1,22 @@
+﻿question_number,question_text,question_text_ar,question_type
+1,What best describes your current income situation?,ما الذي يصف وضع دخلك الحالي بشكل أفضل؟,Registration
+2,How long could you maintain your current lifestyle using savings alone?,كم من الوقت يمكنك الاستمرار في نفس نمط حياتك اعتمادًا على المدخرات فقط؟,Registration
+3,How would you describe your financial obligations?,كيف تصف التزاماتك المالية؟,Registration
+4,How likely are you to need access to your invested money in the next year?,ما مدى احتمالية احتياجك إلى أموالك المستثمرة خلال العام القادم؟,Registration
+1,How would you describe your willingness to take a chance on price changes when buying Egyptian stocks?,كيف تصف استعدادك لتحمل تقلبات أسعار الأسهم المصرية؟,Questionnaire
+2,"If the stock price declines suddenly after purchase, how would you respond?","إذا انخفض سعر السهم فجأة بعد الشراء، كيف سيكون تصرفك؟",Questionnaire
+3,"When you think of the word “risk”, which word comes to mind first?","عندما تسمع كلمة “مخاطرة”، ما أول كلمة تخطر ببالك؟",Questionnaire
+4,How likely are you to buy a risky Egyptian stock mainly for the excitement of seeing whether its value increased or decreased ?,هل تفكر يومًا في شراء سهم عالي المخاطرة لمجرد تجربة التغير في قيمته؟,Questionnaire
+5,"If you had to choose between more job security with a small salary increase and less job security with a large salary increase, which would you prefer?","إذا كان الاختيار بين وظيفة أكثر استقرارًا بزيادة بسيطة في الراتب أو وظيفة أقل استقرارًا بزيادة كبيرة، ماذا تفضل؟",Questionnaire
+6,"If you were facing a major decision to buy a stock in the Egyptian market, would you be more concerned about:","عند اتخاذ قرار شراء سهم في السوق المصري، ما الذي يقلقك أكثر؟",Questionnaire
+7,How do you think you would feel after making a major financial decision to spend money on a stock?,كيف تتوقع أن تشعر بعد اتخاذ قرار مالي كبير بشراء سهم؟,Questionnaire
+8,Imagine you could choose how to be paid at work. Which option would you prefer?,"إذا كان بإمكانك اختيار طريقة الدفع في العمل، أي خيار تفضل؟",Questionnaire
+9,"Looking at your past life choices (education, career, or big purchases), what degree of risk have you generally taken?","بالنظر لقراراتك السابقة (تعليم، عمل، مشتريات)، ما مستوى المخاطرة الذي اتخذته عادةً؟",Questionnaire
+10,What degree of risk are you currently prepared to take with your financial decisions?,ما مستوى المخاطرة الذي أنت مستعد لتحمله حاليًا في قراراتك المالية؟,Questionnaire
+11,"If you identified a stock on the EGX that appeared highly profitable, but you did not have enough funds, how likely would you be to borrow money (in EGP) to invest?","إذا وجدت سهمًا مربحًا في البورصة المصرية ولكن لا تملك المال الكافي، ما احتمالية أن تقترض للاستثمار؟",Questionnaire
+12,How much confidence do you have in your ability to make good financial decisions?,ما مدى ثقتك في قدرتك على اتخاذ قرارات مالية جيدة؟,Questionnaire
+13,"Suppose you bought a stock and its value fell significantly because of bad management. If that company got a new, better management team today, would you consider investing in it again?","إذا اشتريت سهمًا وانخفض بسبب سوء الإدارة ثم تغيرت الإدارة للأفضل، هل ستفكر في الاستثمار فيه مرة أخرى؟",Questionnaire
+14,By how much could the total value of your investments in the Egyptian market (in EGP) fall before you would start to feel uncomfortable?,إلى أي مدى يمكن أن تنخفض قيمة استثماراتك قبل أن تشعر بعدم الارتياح؟,Questionnaire
+15,Which is more important to you when investing in Egypt?,ما الأكثر أهمية بالنسبة لك عند الاستثمار في مصر؟,Questionnaire
+16,"If you were to look at your spending habits in recent years, have your choices shifted toward safety or toward taking chances?",هل تغيرت عاداتك المالية في السنوات الأخيرة نحو الأمان أم المخاطرة؟,Questionnaire
+17,"What percentage of your available investment funds would you be willing to place in high-risk, high-return Egyptian investments?",ما نسبة أموالك الاستثمارية التي ستكون مستعدًا لوضعها في استثمارات عالية المخاطر والعائد؟,Questionnaire

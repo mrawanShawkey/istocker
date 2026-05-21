@@ -1,10 +1,8 @@
 from flask import Flask
-from sqlalchemy.orm import DeclarativeBase
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from api.config import Config
-from api.common.extentions.extentions import bcrypt, jwt
+from api.common.extentions.extentions import db, bcrypt, jwt
 from api.auth.controllers import auth
 from api.market.controllers import market
 from api.me.controllers import me
@@ -12,17 +10,13 @@ from api.questions.controllers import questions
 from api.common.errors.app_errors import AppErrors
 from api.common.errors.error_handler import handle_error
 
-class Base(DeclarativeBase):
-    pass
-db = SQLAlchemy(model_class=Base)
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
-    bcrypt.init(app)
-    jwt.init(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
 
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(market, url_prefix='/market')

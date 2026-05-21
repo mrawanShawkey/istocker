@@ -1,5 +1,5 @@
 from flask import jsonify
-from logs.logs import error_logger
+from api.common.logs.logs import error_logger
 
 def handle_error(err):
     message = getattr(err, 'message', 'Something went wrong.')
@@ -7,17 +7,16 @@ def handle_error(err):
     status_code = getattr(err, 'status_code', 500)
     error_logger.log(status_code, code, message)
 
-    if (err.isOperational):
+    if (err.is_operational):
         response = {
             'success': False,
             'code': code,
             'message': message 
         }
     else:
-        status_code = 500
         response = {
             'success': False,
             'code': code,
             'message': message
         }
-    return jsonify(response), err.status_code
+    return jsonify(response), status_code

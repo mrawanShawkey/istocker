@@ -2,7 +2,7 @@ from datetime import datetime
 from api.app import create_app, db
 from api.models import RiskCat, RiskCatAr, RiskLevel, RiskLevelAr, QuestionType
 from api.models import RiskCategory, Question, Option, Sector, Stock, StockPrice
-from config.paths import CLEAN_MARKET_DATA, SECTORS, STOCKS
+from config.paths import CLEAN_MARKET_DATA, OPTIONS, QUESTIONS, SECTORS, STOCKS
 import pandas as pd
 
 def seed():

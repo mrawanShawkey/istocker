@@ -1,8 +1,9 @@
 class AppErrors(Exception):
-    def __init__(self, message, code, status_code = 500, is_operational = True):
+    def __init__(self, status_code, code, message, is_operational = False):
         super().__init__(message)
-        self.code = code
         self.status_code = status_code
+        self.code = code
+        self.message = message
         self.is_operational = is_operational
     
     def __str__(self):

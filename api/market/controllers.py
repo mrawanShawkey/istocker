@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-import market.services as Services
+import api.market.services as Services
+import api.common.errors.errors as Errors
 
 market = Blueprint('market', __name__)
 
@@ -15,7 +16,7 @@ def get_market_data():
 
 @market.route('/<string:ticker>')
 def get_ticker_data(ticker):
-    data = Services.get_market_data_by_ticker(ticker)
+    data = Services.get_ticker_data(ticker)
     response = {
         "success": True,
         "data": data,

@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
-import me.services as Services
-from api.common.utils import token_required
+import api.me.services as Services
+from flask_jwt_extended import jwt_required
 import api.common.utils as Utils
 import api.common.errors.errors as Errors
 
-me = Blueprint('me', __name__)
+me = Blueprint('user', __name__)
 
 @me.route('/')
-@token_required
+@jwt_required()
 def get_me():
     user_id = Utils.get_id_from_token(request.headers)
     data = Services.get_me(user_id)
@@ -19,7 +19,7 @@ def get_me():
     return jsonify(response), 200
 
 @me.route('/profile', methods=['PATCH'])
-@token_required
+@jwt_required()
 def edit_profile():
     payload = request.get_json()
     data = Services.edit_profile(payload)
@@ -31,7 +31,7 @@ def edit_profile():
     return jsonify(response), 200
 
 @me.route('/preferences', methods=['PATCH'])
-@token_required
+@jwt_required()
 def edit_preferences():
     payload = request.get_json()
     data = Services.edit_preferences(payload)
@@ -43,7 +43,7 @@ def edit_preferences():
     return jsonify(response), 200
 
 @me.route('/results')
-@token_required
+@jwt_required()
 def get_results():
     data = Services.get_results()
     response = {

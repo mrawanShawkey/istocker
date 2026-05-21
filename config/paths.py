@@ -70,4 +70,4 @@ EDA_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # -------------------------
 # Log File
 # -------------------------
-ERROR_LOGS = BASE_DIR / "api" / "common" / "logger" / "errors.log"
+ERROR_LOGS = BASE_DIR / "api" / "common" / "logs" / "errors.log"
