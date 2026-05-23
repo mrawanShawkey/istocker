@@ -1,6 +1,6 @@
 from datetime import datetime
 from api.app import create_app, db
-from api.models import RiskCat, RiskCatAr, RiskLevel, RiskLevelAr, QuestionType
+from api.models import RiskCat, RiskCatAr, RiskLevel, RiskLevelAr, QuestionType, QuestionFormat
 from api.models import RiskCategory, Question, Option, Sector, Stock, StockPrice
 from config.paths import CLEAN_MARKET_DATA, OPTIONS, QUESTIONS, SECTORS, STOCKS
 import pandas as pd
@@ -51,7 +51,8 @@ def seed():
                 question_number = row['question_number'],
                 question_text = row['question_text'],
                 question_text_ar = row['question_text_ar'],
-                question_type = QuestionType(row['question_type'])
+                question_type = QuestionType(row['question_type']),
+                question_format = QuestionFormat(row['question_format'])
             )
             db.session.add(question)
         db.session.commit()

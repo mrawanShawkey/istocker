@@ -2,11 +2,20 @@ from api.common.extentions.extentions import db
 from datetime import date as date_type, datetime, timezone, timedelta
 from decimal import Decimal
 from enum import Enum as PyEnum
+from uuid import UUID as PyUUID, uuid4
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, BigInteger, Float, Numeric, Boolean, Text, DateTime, Date, JSON, ForeignKey, Enum
+from sqlalchemy import String, Integer, BigInteger, Float, Numeric, Boolean, Text, DateTime, Date, JSON, ForeignKey, Enum, UUID
 from typing import Optional, List
 
 # Enum Classes
+class TokenType(PyEnum):
+    ACCESS = 'Access'
+    REFRESH = 'Refresh'
+
+class Language(PyEnum):
+    ENGLISH = 'En'
+    ARABIC = 'Ar'
+
 class RiskCat(PyEnum):
     CONSERVATIVE = 'Conservative'
     MODERATE = 'Moderate'
@@ -31,33 +40,40 @@ class QuestionType(PyEnum):
     REGISTRATION = 'Registration'
     QUESTIONNAIRE = 'Questionnaire'
 
+class QuestionFormat(PyEnum):
+    MCQ = 'MCQ'
+    SCALE = 'Scale'
+
 # Models
 class User(db.Model):
     __tablename__ = 'users'
 
     user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    uuid: Mapped[PyUUID] = mapped_column(UUID(as_uuid=True), default=uuid4, unique=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
-    username: Mapped[str] = mapped_column(String(100), unique=True)
     first_name: Mapped[str] = mapped_column(String(100))
     last_name: Mapped[str] = mapped_column(String(100))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    tokens: Mapped[List['RefreshToken']] = relationship('RefreshToken', back_populates='user')
-    user_profile: Mapped['UserProfile'] = relationship('UserProfile', back_populates='user', uselist=False)
-    risk_assessments: Mapped[List['RiskAssessment']] = relationship('RiskAssessment', back_populates='user')
-    user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='user')
+    tokens: Mapped[List['Token']] = relationship('Token', back_populates='user', cascade='all, delete-orphan')
+    user_preference: Mapped['UserPreference'] = relationship('UserPreference', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    user_profile: Mapped['UserProfile'] = relationship('UserProfile', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    risk_assessments: Mapped[List['RiskAssessment']] = relationship('RiskAssessment', back_populates='user', cascade='all, delete-orphan')
+    user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='user', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return f'<User: {self.username}>'
+        return f'<User: {self.first_name} {self.last_name}>'
     
-class RefreshToken(db.Model):
-    __tablename__ = 'refresh_tokens'
+class Token(db.Model):
+    __tablename__ = 'tokens'
 
     token_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    jwt_id: Mapped[str] = mapped_column(String(36), unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
-    token: Mapped[str] = mapped_column(Text, index=True, unique=True)
+    token_type: Mapped[TokenType] = mapped_column(Enum(TokenType, values_callable=lambda x: [e.value for e in x]))
+    block_list: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     expires_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc) + timedelta(days=7))
 
@@ -66,16 +82,27 @@ class RefreshToken(db.Model):
     def __repr__(self):
         return f'<Refresh token value for user {self.user}. Expires at: {self.expires_at}>'
 
+class UserPreference(db.Model):
+    __tablename__ = 'user_preferences'
+
+    preference_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'), unique=True)
+    language: Mapped[Language] = mapped_column(Enum(Language, values_callable=lambda x: [e.value for e in x]), default='En')
+    notifications: Mapped[bool] = mapped_column(Boolean, default=0)
+
+    user: Mapped['User'] = relationship('User', back_populates='user_preference')
+    def __repr__(self):
+        pass
+
 class UserProfile(db.Model):
     __tablename__ = 'user_profiles'
 
     profile_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'), unique=True)
-    risk_capacity_score: Mapped[int | None] = mapped_column(Integer)
+    risk_capacity_score: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='user_profile')
     user: Mapped['User'] = relationship('User', back_populates='user_profile')
 
     def __repr__(self):
@@ -87,10 +114,10 @@ class RiskCategory(db.Model):
     category_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     category_name: Mapped[RiskCat] = mapped_column(Enum(RiskCat, values_callable=lambda x: [e.value for e in x]), unique=True)
     category_name_ar: Mapped[RiskCatAr] = mapped_column(Enum(RiskCatAr, values_callable=lambda x: [e.value for e in x]), unique=True)
-    description: Mapped[str] = mapped_column(Text, unique=True)
-    description_ar: Mapped[str] = mapped_column(Text, unique=True)
-    min_score: Mapped[int] = mapped_column(Integer, unique=True)
-    max_score: Mapped[int] = mapped_column(Integer, unique=True)
+    description: Mapped[str] = mapped_column(Text)
+    description_ar: Mapped[str] = mapped_column(Text)
+    min_score: Mapped[int] = mapped_column(Integer)
+    max_score: Mapped[int] = mapped_column(Integer)
 
     risk_assessments: Mapped[List['RiskAssessment']] = relationship('RiskAssessment', back_populates='risk_category')
 
@@ -102,9 +129,9 @@ class RiskAssessment(db.Model):
 
     assessment_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
-    risk_tolerance_score: Mapped[int | None] = mapped_column(Integer)
-    total_risk_score: Mapped[int | None] = mapped_column(Integer)
-    risk_category_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('risk_categories.category_id'))
+    risk_tolerance_score: Mapped[int] = mapped_column(Integer)
+    total_risk_score: Mapped[int] = mapped_column(Integer)
+    risk_category_id: Mapped[int] = mapped_column(Integer, ForeignKey('risk_categories.category_id'))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='risk_assessment')
@@ -122,6 +149,7 @@ class Question(db.Model):
     question_text: Mapped[str] = mapped_column(Text, unique=True)
     question_text_ar: Mapped[str] = mapped_column(Text, unique=True)
     question_type: Mapped[QuestionType] = mapped_column(Enum(QuestionType, values_callable=lambda x: [e.value for e in x]))
+    question_format: Mapped[QuestionFormat] = mapped_column(Enum(QuestionFormat, values_callable=lambda x: [e.value for e in x]))
 
     options: Mapped[List['Option']] = relationship('Option', back_populates='question')
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='question')
@@ -151,13 +179,11 @@ class UserResponse(db.Model):
     response_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
     assessment_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('risk_assessments.assessment_id'))
-    profile_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('user_profiles.profile_id'))
     question_id: Mapped[int] = mapped_column(Integer, ForeignKey('questions.question_id'))
     option_id: Mapped[int] = mapped_column(Integer, ForeignKey('options.option_id'))
     
     user: Mapped['User'] = relationship('User', back_populates='user_responses')
     risk_assessment: Mapped[Optional['RiskAssessment']] = relationship('RiskAssessment', back_populates='user_responses')
-    user_profile: Mapped[Optional['UserProfile']] = relationship('UserProfile', back_populates='user_responses')
     question: Mapped['Question'] = relationship('Question', back_populates='user_responses')
     option: Mapped['Option'] = relationship('Option', back_populates='user_responses')
 
@@ -183,8 +209,8 @@ class Stock(db.Model):
 
     stock_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     ticker_symbol: Mapped[str] = mapped_column(String(10), unique=True)
-    company_name: Mapped[str] = mapped_column(String(255))
-    company_name_ar: Mapped[str] = mapped_column(String(255))
+    company_name: Mapped[str] = mapped_column(String(255), unique=True)
+    company_name_ar: Mapped[str] = mapped_column(String(255), unique=True)
     sector_id: Mapped[int] = mapped_column(Integer, ForeignKey('sectors.sector_id'))
     description: Mapped[str] = mapped_column(Text)
     description_ar: Mapped[str] = mapped_column(Text)

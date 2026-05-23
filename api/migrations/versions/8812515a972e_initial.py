@@ -1,8 +1,8 @@
-"""empty message
+"""initial
 
-Revision ID: d3d4605075f9
+Revision ID: 8812515a972e
 Revises: 
-Create Date: 2026-04-18 19:09:11.954095
+Create Date: 2026-05-23 16:44:33.667973
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd3d4605075f9'
+revision = '8812515a972e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,32 +23,29 @@ def upgrade():
     sa.Column('question_number', sa.Integer(), nullable=False),
     sa.Column('question_text', sa.Text(), nullable=False),
     sa.Column('question_text_ar', sa.Text(), nullable=False),
-    sa.Column('question_type', sa.Enum('REGISTRATION', 'QUESTIONNAIRE', name='questiontype'), nullable=False),
+    sa.Column('question_type', sa.Enum('Registration', 'Questionnaire', name='questiontype'), nullable=False),
+    sa.Column('question_format', sa.Enum('MCQ', 'Scale', name='questionformat'), nullable=False),
     sa.PrimaryKeyConstraint('question_id'),
     sa.UniqueConstraint('question_text'),
     sa.UniqueConstraint('question_text_ar')
     )
     op.create_table('recommendation_sets',
     sa.Column('set_id', sa.Integer(), nullable=False),
-    sa.Column('risk_category', sa.Enum('CONSERVATIVE', 'MODERATE', 'AGGRESSIVE', name='riskcat'), nullable=False),
+    sa.Column('risk_category', sa.Enum('Conservative', 'Moderate', 'Aggressive', name='riskcat'), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('set_id')
     )
     op.create_table('risk_categories',
     sa.Column('category_id', sa.Integer(), nullable=False),
-    sa.Column('category_name', sa.Enum('CONSERVATIVE', 'MODERATE', 'AGGRESSIVE', name='riskcat'), nullable=False),
-    sa.Column('category_name_ar', sa.Enum('CONSERVATIVE', 'MODERATE', 'AGGRESSIVE', name='riskcatar'), nullable=False),
+    sa.Column('category_name', sa.Enum('Conservative', 'Moderate', 'Aggressive', name='riskcat'), nullable=False),
+    sa.Column('category_name_ar', sa.Enum('محافظ', 'متوسط', 'جريء', name='riskcatar'), nullable=False),
     sa.Column('description', sa.Text(), nullable=False),
     sa.Column('description_ar', sa.Text(), nullable=False),
     sa.Column('min_score', sa.Integer(), nullable=False),
     sa.Column('max_score', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('category_id'),
     sa.UniqueConstraint('category_name'),
-    sa.UniqueConstraint('category_name_ar'),
-    sa.UniqueConstraint('description'),
-    sa.UniqueConstraint('description_ar'),
-    sa.UniqueConstraint('max_score'),
-    sa.UniqueConstraint('min_score')
+    sa.UniqueConstraint('category_name_ar')
     )
     op.create_table('sectors',
     sa.Column('sector_id', sa.Integer(), nullable=False),
@@ -62,16 +59,16 @@ def upgrade():
     )
     op.create_table('users',
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.UUID(), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
-    sa.Column('username', sa.String(length=100), nullable=False),
     sa.Column('first_name', sa.String(length=100), nullable=False),
     sa.Column('last_name', sa.String(length=100), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('user_id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('username')
+    sa.UniqueConstraint('uuid')
     )
     op.create_table('options',
     sa.Column('option_id', sa.Integer(), nullable=False),
@@ -83,24 +80,12 @@ def upgrade():
     sa.ForeignKeyConstraint(['question_id'], ['questions.question_id'], ),
     sa.PrimaryKeyConstraint('option_id')
     )
-    op.create_table('refresh_tokens',
-    sa.Column('token_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('token', sa.Text(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('expires_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
-    sa.PrimaryKeyConstraint('token_id')
-    )
-    with op.batch_alter_table('refresh_tokens', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_refresh_tokens_token'), ['token'], unique=True)
-
     op.create_table('risk_assessments',
     sa.Column('assessment_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('risk_tolerance_score', sa.Integer(), nullable=True),
-    sa.Column('total_risk_score', sa.Integer(), nullable=True),
-    sa.Column('risk_category_id', sa.Integer(), nullable=True),
+    sa.Column('risk_tolerance_score', sa.Integer(), nullable=False),
+    sa.Column('total_risk_score', sa.Integer(), nullable=False),
+    sa.Column('risk_category_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['risk_category_id'], ['risk_categories.category_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
@@ -114,16 +99,39 @@ def upgrade():
     sa.Column('sector_id', sa.Integer(), nullable=False),
     sa.Column('description', sa.Text(), nullable=False),
     sa.Column('description_ar', sa.Text(), nullable=False),
-    sa.Column('risk_level', sa.Enum('LOW', 'MEDIUM', 'HIGH', name='risklevel'), nullable=False),
-    sa.Column('risk_level_ar', sa.Enum('LOW', 'MEDIUM', 'HIGH', name='risklevelar'), nullable=False),
+    sa.Column('risk_level', sa.Enum('Low', 'Medium', 'High', name='risklevel'), nullable=False),
+    sa.Column('risk_level_ar', sa.Enum('منخفض', 'متوسط', 'مرتفع', name='risklevelar'), nullable=False),
     sa.ForeignKeyConstraint(['sector_id'], ['sectors.sector_id'], ),
     sa.PrimaryKeyConstraint('stock_id'),
+    sa.UniqueConstraint('company_name'),
+    sa.UniqueConstraint('company_name_ar'),
     sa.UniqueConstraint('ticker_symbol')
+    )
+    op.create_table('tokens',
+    sa.Column('token_id', sa.Integer(), nullable=False),
+    sa.Column('jwt_id', sa.String(length=36), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('token_type', sa.Enum('Access', 'Refresh', name='tokentype'), nullable=False),
+    sa.Column('block_list', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('expires_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+    sa.PrimaryKeyConstraint('token_id'),
+    sa.UniqueConstraint('jwt_id')
+    )
+    op.create_table('user_preferences',
+    sa.Column('preference_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('language', sa.Enum('En', 'Ar', name='language'), nullable=False),
+    sa.Column('notifications', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+    sa.PrimaryKeyConstraint('preference_id'),
+    sa.UniqueConstraint('user_id')
     )
     op.create_table('user_profiles',
     sa.Column('profile_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('risk_capacity_score', sa.Integer(), nullable=True),
+    sa.Column('risk_capacity_score', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
@@ -165,12 +173,10 @@ def upgrade():
     sa.Column('response_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('assessment_id', sa.Integer(), nullable=True),
-    sa.Column('profile_id', sa.Integer(), nullable=True),
     sa.Column('question_id', sa.Integer(), nullable=False),
     sa.Column('option_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['assessment_id'], ['risk_assessments.assessment_id'], ),
     sa.ForeignKeyConstraint(['option_id'], ['options.option_id'], ),
-    sa.ForeignKeyConstraint(['profile_id'], ['user_profiles.profile_id'], ),
     sa.ForeignKeyConstraint(['question_id'], ['questions.question_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
     sa.PrimaryKeyConstraint('response_id')
@@ -185,12 +191,10 @@ def downgrade():
     op.drop_table('recommendations')
     op.drop_table('predictions')
     op.drop_table('user_profiles')
+    op.drop_table('user_preferences')
+    op.drop_table('tokens')
     op.drop_table('stocks')
     op.drop_table('risk_assessments')
-    with op.batch_alter_table('refresh_tokens', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_refresh_tokens_token'))
-
-    op.drop_table('refresh_tokens')
     op.drop_table('options')
     op.drop_table('users')
     op.drop_table('sectors')
