@@ -63,7 +63,7 @@ def seed():
     if Option.query.first():
        print('Options already seeded.')
     else:
-        options_df = pd.read_csv(OPTIONS)
+        options_df = pd.read_csv(OPTIONS, keep_default_na=False, na_values=[''])
         for _, row in options_df.iterrows():
             option = Option(
                 question_id = row['question_id'],
