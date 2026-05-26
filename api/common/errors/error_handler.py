@@ -7,16 +7,10 @@ def handle_error(err):
     status_code = getattr(err, 'status_code', 500)
     error_logger.log(status_code, code, message)
 
-    if (err.is_operational):
-        response = {
-            'success': False,
-            'code': code,
-            'message': message 
-        }
-    else:
-        response = {
-            'success': False,
-            'code': code,
-            'message': message
-        }
+    response = {
+        'success': False,
+        'code': code,
+        'message': message 
+    }
+    
     return jsonify(response), status_code
