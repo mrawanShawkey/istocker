@@ -16,6 +16,8 @@ def get_market_data():
 
 @market.route('/<string:ticker>')
 def get_ticker_data(ticker):
+    if not ticker:
+        raise Errors.TickerNotFound
     data = Services.get_ticker_data(ticker)
     response = {
         "success": True,

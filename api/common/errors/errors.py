@@ -22,6 +22,6 @@ ValidationFailed = AppErrors(422, 'VALIDATION_FAILES', 'Your input is incorrectl
 MissingQuestionType = AppErrors(400, 'MISSING_QUESTION_TYPE', 'The question type is missing or incorrect.', True)
 
 #NOT FOUND ERRORS
-MarketDataUnavailable = AppErrors(404, 'Market_Data_Unavailable', 'Market data is currently unavailable. Please try again later.', True)
-TickerNotFound = AppErrors(404, 'TICKER_NOT_FOUND', 'This ticker symbol does not exist. Please choose one from the existing list of tickers.', True)
+MarketDataUnavailable = AppErrors(404, 'MARKET_DATA_UNAVAILABLE', 'Market data is currently unavailable. Please try again later.', True)
+TickerNotFound = AppErrors(404, 'TICKER_NOT_FOUND', 'The ticker symbol is missing or does not exist. Please choose one from the existing list of tickers.', True)
 ResultsNotFound = AppErrors(404, 'RESULTS_NOT_FOUND', 'Please answer the questionnaire to view risk scores and reommendations.', True)
