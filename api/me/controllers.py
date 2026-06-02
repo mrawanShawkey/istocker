@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 import api.me.services as Services
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import api.common.utils as Utils
 import api.common.errors.errors as Errors
 
@@ -9,8 +9,8 @@ me = Blueprint('user', __name__)
 @me.route('/')
 @jwt_required()
 def get_me():
-    user_id = Utils.get_id_from_token(request.headers)
-    data = Services.get_me(user_id)
+    uuid = get_jwt_identity()
+    data = Services.get_me(uuid)
     response = {
         "success": True,
         "data": data,

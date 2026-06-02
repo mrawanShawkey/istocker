@@ -1,13 +1,17 @@
 from functools import wraps
 from flask import request
+from api.models import *
 import api.common.errors.errors as Errors
 from api.common.extentions.extentions import bcrypt, jwt
 from flask_jwt_extended import create_access_token, create_refresh_token
-import api.repositories as Repo
 
-## Decode JWT to user_id!!!!!!!!!!!!!!!!!!!!!
-def get_id_from_token(headers):
-    pass
+
+def get_user_id_with_uuid(uuid):
+    user = User.query.filter_by(uuid=uuid).first()
+    if user:
+        return user.user_id
+    else:
+        raise Errors.UserNotFound
 
 ## Password Hashing
 def hash_password(password):
@@ -15,7 +19,7 @@ def hash_password(password):
 
 ## Verify Password (bcrypt.compare)!!!!!!!!!!!!!!!!!!!!!
 def verify_password(email, password):
-    hash = Repo.get_user_by_email(email)
+    # check email
     if bcrypt.check_password_hash(password, hash):
         return True
     else:

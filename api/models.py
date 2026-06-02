@@ -129,9 +129,9 @@ class RiskAssessment(db.Model):
 
     assessment_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
-    risk_tolerance_score: Mapped[int] = mapped_column(Integer)
-    total_risk_score: Mapped[int] = mapped_column(Integer)
-    risk_category_id: Mapped[int] = mapped_column(Integer, ForeignKey('risk_categories.category_id'))
+    risk_tolerance_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_risk_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    risk_category_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('risk_categories.category_id'), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='risk_assessment')

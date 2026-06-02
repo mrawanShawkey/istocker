@@ -1,25 +1,11 @@
 from datetime import datetime, timedelta
+from collections import defaultdict
 from sqlalchemy import and_, or_
 from api.models import *
 from api.app import db
 import api.common.errors.errors as Errors
+from api.common.errors.app_errors import AppErrors
 
-# Auth
-def create_user():
-    pass
-
-def get_user_by_email(email):
-    pass
-
-def edit_user_settings():
-    pass
-
-def delete_user(email):
-    pass
-
-
-
-# Market
 def get_latest_date():
     stmt = (
         db.select(StockPrice.date)
@@ -150,30 +136,30 @@ def get_stock_info(ticker): #dict
             }
         raise Errors.MarketDataUnavailable
 
-def get_top_movers(): #list of dicts
-    price_differences = get_all_percent_differences()
-    stmt = (
-        db.select(Stock.stock_id, Stock.ticker_symbol, Stock.company_name, Stock.company_name_ar)
-    )
-    rows = db.session.execute(stmt).all()
-    all_movers = [
-        {
-            "stockId": row.stock_id,
-            "ticker": row.ticker_symbol,
-            "companyName": row.company_name,
-            "companyNameAr": row.company_name_ar,
-            "priceDifference": price_differences.get(row.ticker_symbol, 0.0)
-        }
-        for row in rows
-    ]
-    top_movers = sorted(
-        all_movers,
-        key = lambda x: x["priceDifference"],
-        reverse = True,
-    )[:5]
-    for mover in top_movers:
-        del mover["priceDifference"]
-    return top_movers
+# def get_top_movers(): #list of dicts
+#     price_differences = get_all_percent_differences()
+#     stmt = (
+#         db.select(Stock.stock_id, Stock.ticker_symbol, Stock.company_name, Stock.company_name_ar)
+#     )
+#     rows = db.session.execute(stmt).all()
+#     all_movers = [
+#         {
+#             "stockId": row.stock_id,
+#             "ticker": row.ticker_symbol,
+#             "companyName": row.company_name,
+#             "companyNameAr": row.company_name_ar,
+#             "priceDifference": price_differences.get(row.ticker_symbol, 0.0)
+#         }
+#         for row in rows
+#     ]
+#     top_movers = sorted(
+#         all_movers,
+#         key = lambda x: x["priceDifference"],
+#         reverse = True,
+#     )[:5]
+#     for mover in top_movers:
+#         del mover["priceDifference"]
+#     return top_movers
 
 # def get_top_sectors(): #list of dicts
 #     price_differences = get_all_percent_differences()
@@ -182,19 +168,3 @@ def get_top_movers(): #list of dicts
 #         .join(Sector, Stock.sector_id == Sector.sector_id)
 #     )
 #     pass
-
-
-
-# Me
-
-
-
-# Questions
-def get_registration_q_and_r():
-    pass
-
-def get_questionnaire_q_and_r():
-    pass
-
-def submit_registration_responses():
-    pass

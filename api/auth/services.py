@@ -1,5 +1,5 @@
 from flask import jsonify
-import api.repositories as Repos
+import api.auth.repositories as Repos
 
 def register(payload):
     pass

@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
+from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, JWTDecodeError
 
 from api.config import Config
 from api.common.extentions.extentions import db, bcrypt, jwt
@@ -23,6 +24,9 @@ def create_app():
     app.register_blueprint(me, url_prefix='/me')
     app.register_blueprint(questions, url_prefix='/questions')
     app.register_error_handler(AppErrors, handle_error)
+    app.register_error_handler(NoAuthorizationError, handle_error)
+    app.register_error_handler(InvalidHeaderError, handle_error)
+    app.register_error_handler(JWTDecodeError, handle_error)
 
     migrate = Migrate(app, db)
 

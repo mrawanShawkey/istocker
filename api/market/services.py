@@ -1,4 +1,4 @@
-import api.repositories as Repos
+import api.market.repositories as Repos
 
 def get_market_data():
     latest_date = Repos.get_latest_date()

@@ -1,5 +1,5 @@
 from flask import jsonify
-import api.repositories as Repos
+import api.me.repositories as Repos
 
 def get_me():
     pass
