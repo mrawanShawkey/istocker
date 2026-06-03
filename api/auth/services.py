@@ -30,9 +30,10 @@ def login(email, password):
     }
     return data
 
-def refresh(refresh_token):
-    pass
-
+def refresh(uuid):
+    data = {'accessToken': create_access_token(uuid)}
+    return data
+    
 def change_email(payload):
     pass
 

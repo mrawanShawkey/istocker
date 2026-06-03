@@ -78,7 +78,6 @@ class Token(db.Model):
     jwt_id: Mapped[str] = mapped_column(String(36), unique=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
     token_type: Mapped[TokenType] = mapped_column(Enum(TokenType, values_callable=lambda x: [e.value for e in x]))
-    block_list: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     expires_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc) + timedelta(days=7))
 
