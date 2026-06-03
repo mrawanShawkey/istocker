@@ -42,6 +42,5 @@ def submit_responses(uuid, q_type, responses):
         }
         return data
 
-def edit_responses(uuid, payload):
-    edited_responses_list = payload['editedResponses']
-    Repos.edit_responses(uuid, edited_responses_list)
+def edit_responses(uuid, edited_responses):
+    Repos.edit_responses(uuid, edited_responses)

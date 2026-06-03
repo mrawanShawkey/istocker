@@ -8,7 +8,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/register', methods=['POST'])
 def register():
     payload = request.get_json()
-    required_fields = ['first_name', 'last_name', 'email', 'password']
+    required_fields = ['firstName', 'lastName', 'email', 'password']
     missing = [field for field in required_fields if field not in payload]
     if missing:
         raise Errors.InvalidInput
@@ -38,7 +38,7 @@ def login():
 @auth.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    uuid = get_jwt_identity
+    uuid = get_jwt_identity()
     data = Services.refresh()
     response = {
         'success': True,

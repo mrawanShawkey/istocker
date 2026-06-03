@@ -54,7 +54,8 @@ def edit_responses():
         message = 'No updates were made.'
     else:
         uuid = get_jwt_identity()
-        Services.edit_responses(uuid, payload)
+        edited_responses = payload['editedResponses']
+        Services.edit_responses(uuid, edited_responses)
         message = 'Responses updated.'
     response = {
         'success': True,

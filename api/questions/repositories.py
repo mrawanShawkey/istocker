@@ -217,10 +217,10 @@ def get_recommendations(risk_category):
     return recommendations
 
 #PATCH /questions/responses
-def edit_responses(uuid, edited_responses_list):
+def edit_responses(uuid, edited_responses):
     user_id = get_user_id_with_uuid(uuid)
     try:
-        for item in edited_responses_list:
+        for item in edited_responses:
             q_id = item.get('questionId')
             o_id = item.get('optionId')
             if q_id is None or o_id is None:
