@@ -63,6 +63,11 @@ class User(db.Model):
     risk_assessments: Mapped[List['RiskAssessment']] = relationship('RiskAssessment', back_populates='user', cascade='all, delete-orphan')
     user_responses: Mapped[List['UserResponse']] = relationship('UserResponse', back_populates='user', cascade='all, delete-orphan')
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.user_preference = UserPreference()
+        self.user_profile = UserProfile()
+
     def __repr__(self):
         return f'<User: {self.first_name} {self.last_name}>'
     
@@ -92,14 +97,14 @@ class UserPreference(db.Model):
 
     user: Mapped['User'] = relationship('User', back_populates='user_preference')
     def __repr__(self):
-        pass
+        return f'<UserPreference for User {self.user_id}>'
 
 class UserProfile(db.Model):
     __tablename__ = 'user_profiles'
 
     profile_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'), unique=True)
-    risk_capacity_score: Mapped[int] = mapped_column(Integer)
+    risk_capacity_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 

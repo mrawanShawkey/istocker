@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 import api.auth.services as Services
-import api.common.utils.utils as Utils
+from api.common.utils.utils import *
 import api.common.errors.errors as Errors
 auth = Blueprint('auth', __name__)
 
@@ -9,37 +9,39 @@ auth = Blueprint('auth', __name__)
 def register():
     payload = request.get_json()
     required_fields = ['firstName', 'lastName', 'email', 'password']
-    missing = [field for field in required_fields if field not in payload]
-    if missing:
-        raise Errors.InvalidInput
-    data = Services.register(payload)
-    response = {
-        'success': True,
-        'data': data,
-        'message': 'User created successfully.'
-    }
-    return jsonify(response), 201
+    if required_fields_exist(required_fields, payload):
+        first_name = payload.get('firstName')
+        last_name = payload.get('lastName')
+        email = payload.get('email')
+        password = payload.get('password')
+        data = Services.register(first_name, last_name, email, password)
+        response = {
+            'success': True,
+            'data': data,
+            'message': 'User created successfully.'
+        }
+        return jsonify(response), 201
 
 @auth.route('/login', methods=['POST'])
 def login():
     payload = request.get_json()
     required_fields = ['email', 'password']
-    missing = [field for field in required_fields if field not in payload]
-    if missing:
-        raise Errors.InvalidInput
-    data = Services.login(payload)
-    response = {
-        'success': True,
-        'data': data,
-        'message': 'User logged in successfully.'
-    }
-    return jsonify(response), 200
+    if required_fields_exist(required_fields, payload):
+        email = payload.get('email')
+        password = payload.get('password')
+        data = Services.login(email, password)
+        response = {
+            'success': True,
+            'data': data,
+            'message': 'User logged in successfully.'
+        }
+        return jsonify(response), 200
 
 @auth.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
     uuid = get_jwt_identity()
-    data = Services.refresh()
+    data = Services.refresh(uuid)
     response = {
         'success': True,
         'data': data,
@@ -98,7 +100,7 @@ def reset_password():
 @auth.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
-    uuid = get_jwt_identity
+    uuid = get_jwt_identity()
     payload = request.get_json()
     Services.logout(uuid, payload)
     response = {
@@ -111,7 +113,7 @@ def logout():
 @auth.route('/delete-account', methods=['DELETE'])
 @jwt_required()
 def delete_account():
-    uuid = get_jwt_identity
+    uuid = get_jwt_identity()
     Services.delete_account(uuid)
     response = {
         'success': True,

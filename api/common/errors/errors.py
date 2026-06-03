@@ -2,7 +2,7 @@ from api.common.errors.app_errors import AppErrors
 from api.common.extentions.extentions import jwt
 
 #AUTHENTICATION ERRORS
-AlreadyExists = AppErrors(409, 'ALREADY_EXISTS', 'This email is reserved for an existing user. Try logging in or signing up with a different email.', True)
+UserAlreadyExists = AppErrors(409, 'USER_ALREADY_EXISTS', 'This email is reserved for an existing user. Try logging in or signing up with a different email.', True)
 IncorrectCredentials = AppErrors(401, 'INCORRECT_CREDENTIALS', 'Incorrect email or password.', True)
 
 #AUTHORIZATION ERRORS

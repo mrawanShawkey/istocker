@@ -61,8 +61,7 @@ def submit_responses(uuid, q_type, responses):
     user_id = get_user_id_with_uuid(uuid)
     if q_type == 'Questionnaire':
         assessment = RiskAssessment(
-            user_id = user_id,
-            created_at = datetime().now()
+            user_id = user_id
         )
         db.session.add(assessment)
         db.session.flush()
