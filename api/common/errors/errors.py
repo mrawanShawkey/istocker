@@ -15,9 +15,9 @@ def token_expired(error_string):
 @jwt.invalid_token_loader
 def invalid_token(error_string):
     raise AppErrors(401, 'TOKEN_INVALID', 'Your token has been tampered with.', True)
-@jwt.token_in_blocklist_loader
-def token_in_block(error_string):
-    raise AppErrors(401, 'TOKEN_EXPIRED', 'Your session has timed out.', True)
+# @jwt.token_in_blocklist_loader
+# def token_in_block(error_string):
+#     raise AppErrors(401, 'TOKEN_EXPIRED', 'Your session has timed out.', True)
 
 #INPUT / PARAMS ERRORS
 InvalidInput = AppErrors(400, 'INVALID_INPUT', 'The request body is missing required fields.', True)

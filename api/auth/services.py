@@ -7,10 +7,10 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 def register(first_name, last_name, email, password):
     if Repos.does_email_exist(email):
         raise Errors.UserAlreadyExists
-    pass_hash = bcrypt.generate_password_hash(password)
+    pass_hash = bcrypt.generate_password_hash(password, 10).decode('utf-8')
     uuid = Repos.create_user(first_name, last_name, email, pass_hash)
-    access_token = create_access_token(str(uuid))
-    refresh_token = create_refresh_token(str(uuid))
+    access_token = create_access_token(uuid)
+    refresh_token = create_refresh_token(uuid)
     data = {
         'accessToken': access_token,
         'refreshToken': refresh_token
@@ -31,20 +31,27 @@ def login(email, password):
     return data
 
 def refresh(uuid):
-    data = {'accessToken': create_access_token(uuid)}
+    data = {'newAccessToken': create_access_token(uuid)}
     return data
     
-def change_email(payload):
-    pass
+def change_email(uuid, old_email, password, new_email):
+    password_hash = Repos.email_match_uuid(uuid, old_email)
+    verify_password(password_hash, password)
+    if Repos.does_email_exist(new_email):
+        raise Errors.UserAlreadyExists
+    Repos.change_email(uuid, new_email)
 
-def change_password(old_password, new_password, new_password_re):
-    pass
+def change_password(uuid, old_password, new_password, re_password):
+    Repos.password_match_uuid(uuid, old_password)
+    if new_password != re_password:
+        raise Errors.ValidationFailed
+    Repos.change_password(uuid, new_password)
 
-def forgot_password(payload):
-    pass
+# def forgot_password(payload):
+#     pass
 
-def reset_password(payload):
-    pass
+# def reset_password(payload):
+#     pass
 
 def logout(payload):
     pass
