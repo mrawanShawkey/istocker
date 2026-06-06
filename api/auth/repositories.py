@@ -74,6 +74,32 @@ def change_password(uuid, new_password):
     user.password_hash = bcrypt.generate_password_hash(new_password)
     db.session.commit()
     
+def invalidate_token(uuid, token_payloads):
+    jtis = [payload['jti'] for payload in token_payloads]
+    stmt = db.select(BlockedToken.jti).where(BlockedToken.jti.in_(jtis))
+    existing_jtis = set(db.session.scalars(stmt).all())
+    block_list = []
+    for payload in token_payloads:
+        jti = payload['jti']
+        if jti in existing_jtis:
+            continue
+        expiry = datetime.fromtimestamp(payload['exp'], timezone.utc)
+        blocked_token = BlockedToken(
+            jti = jti,
+            uuid = uuid,
+            expires_at = expiry
+        )
+        block_list.append(blocked_token)
+    db.session.add_all(block_list)
+    db.session.commit()
 
 def delete_user(uuid):
-    pass
+    stmt = (
+        db.select(User)
+        .where(User.uuid==uuid)
+    )
+    user = db.session.execute(stmt).scalar()
+    if not user:
+        raise Errors.UserNotFound
+    db.session.delete(user)
+    db.session.commit()

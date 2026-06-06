@@ -53,8 +53,11 @@ def change_password(uuid, old_password, new_password, re_password):
 # def reset_password(payload):
 #     pass
 
-def logout(payload):
-    pass
+def logout(uuid, access_payload, refresh_payload):
+    uuid = convert_uuid_str_to_UUID(uuid)
+    token_payloads = [access_payload, refresh_payload]
+    Repos.invalidate_token(uuid, token_payloads)
 
-def delete_account():
-    pass
+def delete_account(uuid):
+    uuid = convert_uuid_str_to_UUID(uuid)
+    Repos.delete_user(uuid)

@@ -7,13 +7,13 @@ IncorrectCredentials = AppErrors(401, 'INCORRECT_CREDENTIALS', 'Incorrect email 
 
 #AUTHORIZATION ERRORS
 @jwt.unauthorized_loader
-def unauthorized(error_string):
+def Unauthorized(error_string):
     raise AppErrors(401, 'UNAUTHORIZED', 'You need to be logged in to access this resource', True)
 @jwt.expired_token_loader
-def token_expired(error_string):
+def TokenExpired(error_string):
     raise AppErrors(401, 'TOKEN_EXPIRED', 'Your session has timed out.', True)
 @jwt.invalid_token_loader
-def invalid_token(error_string):
+def InvalidToken(error_string):
     raise AppErrors(401, 'TOKEN_INVALID', 'Your token has been tampered with.', True)
 # @jwt.token_in_blocklist_loader
 # def token_in_block(error_string):

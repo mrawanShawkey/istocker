@@ -57,7 +57,6 @@ class User(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    tokens: Mapped[List['Token']] = relationship('Token', back_populates='user', cascade='all, delete-orphan')
     user_preference: Mapped['UserPreference'] = relationship('UserPreference', back_populates='user', uselist=False, cascade='all, delete-orphan')
     user_profile: Mapped['UserProfile'] = relationship('UserProfile', back_populates='user', uselist=False, cascade='all, delete-orphan')
     risk_assessments: Mapped[List['RiskAssessment']] = relationship('RiskAssessment', back_populates='user', cascade='all, delete-orphan')
@@ -71,17 +70,14 @@ class User(db.Model):
     def __repr__(self):
         return f'<User: {self.first_name} {self.last_name}>'
     
-class Token(db.Model):
-    __tablename__ = 'tokens'
+class BlockedToken(db.Model):
+    __tablename__ = 'blocked_tokens'
 
     token_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    jwt_id: Mapped[str] = mapped_column(String(36), unique=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'))
-    token_type: Mapped[TokenType] = mapped_column(Enum(TokenType, values_callable=lambda x: [e.value for e in x]))
+    jti: Mapped[str] = mapped_column(String(36), unique=True)
+    uuid: Mapped[PyUUID] = mapped_column(UUID(as_uuid=True), default=uuid4)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
-    expires_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc) + timedelta(days=7))
-
-    user: Mapped['User'] = relationship('User', back_populates='tokens')
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
 
     def __repr__(self):
         return f'<Refresh token value for user {self.user}. Expires at: {self.expires_at}>'

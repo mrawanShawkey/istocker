@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity, decode_token
 import api.auth.services as Services
 from api.common.utils.utils import *
 import api.common.errors.errors as Errors
@@ -111,8 +111,13 @@ def change_password():
 @jwt_required()
 def logout():
     uuid = get_jwt_identity()
-    payload = request.get_json()
-    Services.logout(uuid, payload)
+    access_payload = get_jwt()
+    refresh_token = request.get_json().get('refreshToken')
+    try:
+        refresh_payload = decode_token(refresh_token)
+    except Exception as e:
+        raise Errors.InvalidToken
+    Services.logout(uuid, access_payload, refresh_payload)
     response = {
         'success': True,
         'data': None,
@@ -124,6 +129,15 @@ def logout():
 @jwt_required()
 def delete_account():
     uuid = get_jwt_identity()
+    access_payload = get_jwt()
+    refresh_token = request.headers.get('Refresh-Token')
+    if not refresh_token:
+        raise Errors.Unauthorized
+    try:
+        refresh_payload = decode_token(refresh_token)
+    except Exception as e:
+        raise Errors.InvalidToken
+    Services.logout(uuid, access_payload, refresh_payload)
     Services.delete_account(uuid)
     response = {
         'success': True,
