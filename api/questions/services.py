@@ -1,6 +1,6 @@
-from flask import jsonify
 import api.questions.repositories as Repos
 import api.common.errors.errors as Errors
+from api.common.utils.utils import *
 
 def get_question_types():
     return Repos.get_question_types()
@@ -28,7 +28,6 @@ def submit_responses(uuid, q_type, responses):
         risk_tolerance = Repos.calculate_and_store_risk_score(uuid, q_type, responses)
         total_risk = Repos.calculate_and_store_total_risk(uuid, risk_capacity, risk_tolerance)
         risk_category, risk_category_ar, description, description_ar, category_score_range = Repos.get_and_store_risk_category(uuid, total_risk)
-        recommendations = Repos.get_recommendations(risk_category)
         data = {
             'riskCategory': risk_category,
             'riskCategoryAr': risk_category_ar,
@@ -38,9 +37,8 @@ def submit_responses(uuid, q_type, responses):
             'riskCapacityScore': risk_capacity,
             'riskToleranceScore': risk_tolerance,
             'totalRiskScore': total_risk,
-            'recommendations': recommendations
         }
         return data
 
-def edit_responses(uuid, edited_responses):
-    Repos.edit_responses(uuid, edited_responses)
+def edit_responses(uuid, modifications):
+    Repos.edit_responses(uuid, modifications)

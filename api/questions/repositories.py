@@ -157,7 +157,7 @@ def get_and_store_risk_category(uuid, total_risk):
         db.select(RiskCategory)
         .where(RiskCategory.min_score <= total_risk, RiskCategory.max_score >= total_risk)
     )
-    risk_category_row = db.session.execute(stmt).scalars().first()
+    risk_category_row = db.session.scalars(stmt).first()
     min_score = str(risk_category_row.min_score)
     max_score = str(risk_category_row.max_score)
     category_score_range = f'({min_score}-{max_score})'
@@ -174,52 +174,11 @@ def get_and_store_risk_category(uuid, total_risk):
         raise Errors.RecordNotFound
     return risk_category_row.risk_category, risk_category_row.risk_category_ar, risk_category_row.description, risk_category_row.description_ar, category_score_range
 
-def get_recommended_stocks_ids_with_ranks(risk_category):
-    stmt = (
-        db.select(
-            Recommendation.stock_id,
-            Recommendation.rank,
-            Recommendation.predicted_return
-        )
-        .join(RecommendationSet, Recommendation.recommendation_set_id==RecommendationSet.set_id)
-        .where(RecommendationSet.risk_category==risk_category)
-        .order_by(RecommendationSet.created_at.desc())
-        .limit(3)
-    )
-    rows = db.session.execute(stmt).all()
-    return [{'stock_id': row.stock_id, 'predicted_return': row.predicted_return, 'rank': row.rank} for row in rows]
-
-def get_recommendations(risk_category):
-    stocks_ids = get_recommended_stocks_ids_with_ranks(risk_category)
-    recommendations = []
-    for item in stocks_ids:
-        stock_id = item.get('stock_id')
-        predicted_return = item.get('predicted_return')
-        rank = item.get('rank')
-        stmt = (
-            db.select(Stock).where(Stock.stock_id==stock_id)
-        )
-        row = db.session.execute(stmt).scalars().first()
-        recommendation = {
-            'stockId': stock_id,
-            'ticker': row.ticker_symbol,
-            'companyName': row.company_name,
-            'companyNameAr': row.company_name_ar,
-            'description': row.description,
-            'descriptionAr': row.description_ar,
-            'riskLevel': row.risk_level,
-            'riskLevelAr': row.risk_level_ar,
-            'predictedReturn': predicted_return,
-            'rank': rank
-        }
-        recommendations.append(recommendation)
-    return recommendations
-
 #PATCH /questions/responses
-def edit_responses(uuid, edited_responses):
+def edit_responses(uuid, modifications):
     user_id = get_user_id_with_uuid(uuid)
     try:
-        for item in edited_responses:
+        for item in modifications:
             q_id = item.get('questionId')
             o_id = item.get('optionId')
             if q_id is None or o_id is None:

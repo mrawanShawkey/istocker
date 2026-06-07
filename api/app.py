@@ -6,8 +6,9 @@ from api.config import Config
 from api.common.extentions.extentions import db, bcrypt, jwt
 from api.auth.controllers import auth
 from api.market.controllers import market
-from api.me.controllers import me
+from api.user.controllers import user
 from api.questions.controllers import questions
+from api.recommendations.controllers import recommendations
 from api.common.errors.app_errors import AppErrors
 from api.common.errors.error_handler import handle_error
 
@@ -21,8 +22,9 @@ def create_app():
 
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(market, url_prefix='/market')
-    app.register_blueprint(me, url_prefix='/me')
+    app.register_blueprint(user, url_prefix='/user')
     app.register_blueprint(questions, url_prefix='/questions')
+    app.register_blueprint(recommendations, url_prefix='/recommendations')
     app.register_error_handler(AppErrors, handle_error)
     app.register_error_handler(NoAuthorizationError, handle_error)
     app.register_error_handler(InvalidHeaderError, handle_error)

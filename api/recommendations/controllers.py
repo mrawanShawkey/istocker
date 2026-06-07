@@ -6,14 +6,18 @@ from api.common.utils.utils import *
 
 recommendations = Blueprint('recommendations', __name__)
 
-@recommendations.route('/get_recommendations')
-@jwt_required
+@recommendations.route('/')
+@jwt_required()
 def get_recommendations():
     uuid = get_jwt_identity()
     data = Services.get_recommendations(uuid)
+    if data:
+        message = 'User recommendations returned.'
+    else:
+        message = 'Take questionnaire to view recommendations'
     response = {
         'success': True,
         'data': data,
-        'message': 'User recommendations returned'
+        'message': message
     }
     return jsonify(response), 200

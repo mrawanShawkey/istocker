@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import api.questions.services as Services
 import api.common.errors.errors as Errors
+from api.common.utils.utils import *
 
 questions = Blueprint('questions', __name__)
 
@@ -34,7 +35,7 @@ def submit_responses():
     if q_type == 'Registration':
         message = 'Responses saved.'
     else:
-        message = 'Responses saved. Risk profile and top 3 recommended stocks returned.'
+        message = 'Responses saved. Risk profile returned.'
     response = {
         'success': True,
         'data': data, 
@@ -46,16 +47,12 @@ def submit_responses():
 @jwt_required()
 def edit_responses():
     payload = request.get_json()
-    if not payload:
-        message = 'No updates were made.'
-    elif 'editedResponses' not in payload:
-        raise Errors.ValidationFailed
-    elif isinstance(payload['editedResponses'], list) and len(payload['editedResponses']) == 0:
+    modifications = verify_patch_keys(payload)
+    if modifications is None:
         message = 'No updates were made.'
     else:
         uuid = get_jwt_identity()
-        edited_responses = payload['editedResponses']
-        Services.edit_responses(uuid, edited_responses)
+        Services.edit_responses(uuid, modifications)
         message = 'Responses updated.'
     response = {
         'success': True,
