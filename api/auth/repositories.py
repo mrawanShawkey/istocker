@@ -93,6 +93,14 @@ def invalidate_token(uuid, token_payloads):
     db.session.add_all(block_list)
     db.session.commit()
 
+def is_token_revoked(jti):
+    stmt = (
+        db.select(BlockedToken.jti)
+        .where(BlockedToken.jti==jti)
+    )
+    token = db.session.execute(stmt).scalar()
+    return token is not None
+
 def delete_user(uuid):
     stmt = (
         db.select(User)

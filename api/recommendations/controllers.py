@@ -11,13 +11,11 @@ recommendations = Blueprint('recommendations', __name__)
 def get_recommendations():
     uuid = get_jwt_identity()
     data = Services.get_recommendations(uuid)
-    if data:
-        message = 'User recommendations returned.'
-    else:
-        message = 'Take questionnaire to view recommendations'
+    if not data:
+        raise Errors.ResultsNotFound
     response = {
         'success': True,
         'data': data,
-        'message': message
+        'message': 'User recommendations returned.'
     }
     return jsonify(response), 200

@@ -12,9 +12,9 @@ def get_profile():
     uuid = get_jwt_identity()
     data = Services.get_profile(uuid)
     response = {
-        "success": True,
-        "data": data,
-        "message": "User data returned."
+       'success': True,
+        'data': data,
+        'message': 'User profile returned.'
     }
     return jsonify(response), 200
 
@@ -24,9 +24,9 @@ def get_settings():
     uuid = get_jwt_identity()
     data = Services.get_settings(uuid)
     response = {
-        "success": True,
-        "data": data,
-        "message": "User settings returned."
+        'success': True,
+        'data': data,
+        'message': 'User settings returned.'
     }
     return jsonify(response), 200
 
@@ -42,9 +42,9 @@ def edit_profile():
         data = Services.edit_profile(uuid, modifications)
         message = 'User profile has been updated.'
     response = {
-        "success": True,
-        "data": data,
-        "message": message
+        'success': True,
+        'data': data,
+        'message': message
     }
     return jsonify(response), 200
 
@@ -60,8 +60,8 @@ def edit_preferences():
         Services.edit_preferences(uuid, modifications)
         message = 'User preferences have been updated.'
     response = {
-        "success": True,
-        "data": None,
-        "message": message
+        'success': True,
+        'data': None,
+        'message': message
     }
     return jsonify(response), 200

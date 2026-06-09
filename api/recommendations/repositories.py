@@ -38,7 +38,9 @@ def get_recommendations(risk_category):
         predicted_return = item.get('predicted_return')
         rank = item.get('rank')
         stmt = (
-            db.select(Stock).where(Stock.stock_id==stock_id)
+            db.select(Stock, Sector)
+            .join(Stock, Sector.sector_id==Stock.sector_id)
+            .where(Stock.stock_id==stock_id)
         )
         row = db.session.execute(stmt).scalars().first()
         recommendation = {
@@ -48,6 +50,8 @@ def get_recommendations(risk_category):
             'companyNameAr': row.company_name_ar,
             'description': row.description,
             'descriptionAr': row.description_ar,
+            'sector': row.sector,
+            'sectorAr': row.sector_ar,
             'riskLevel': row.risk_level,
             'riskLevelAr': row.risk_level_ar,
             'predictedReturn': predicted_return,

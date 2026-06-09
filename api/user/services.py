@@ -35,7 +35,7 @@ def get_settings(uuid):
         'lastName': last_name,
         'memberSince': member_since,
         'lastUpdated': last_updated,
-        'lang': lang,
+        'language': lang,
         'notifications': notifs
     }
     return data
