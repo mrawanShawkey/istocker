@@ -13,7 +13,9 @@ def get_user_risk_category(user_id):
         .where(RiskAssessment.user_id==user_id)
     )
     risk_category = db.session.scalar(stmt)
-    return risk_category if risk_category is not None else None
+    if not risk_category:
+        raise Errors.ResultsNotFound
+    return risk_category
 
 def get_recommended_stocks_ids_with_ranks(risk_category):
     stmt = (

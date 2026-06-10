@@ -88,24 +88,33 @@ def change_password():
 # @auth.route('/forgot-password', methods = ['POST'])
 # def forgot_password():
 #     payload = request.get_json()
-#     Services.forgot_password(payload)
-#     response = {
-#         'success': True,
-#         'data': None,
-#         'message': 'Verification code sent to email.'
-#     }
-#     return jsonify(response), 200
+#     required_fields = ['email']
+#     if required_fields_exist(required_fields, payload):
+#         email = payload.get('email')
+#         Services.forgot_password(email)
+#         response = {
+#             'success': True,
+#             'data': None,
+#             'message': 'Verification code sent to email.'
+#         }
+#         return jsonify(response), 200
 
-# @auth.route('/reset-password', methods = ['POST'])
-# def reset_password():
-#     payload = request.get_json()
-#     Services.reset_password(payload)
-#     response = {
-#         'success': True,
-#         'data': None,
-#         'message': 'Password changed successfully.'
-#     }
-#     return jsonify(response), 200
+@auth.route('/reset-password', methods = ['POST'])
+def reset_password():
+    payload = request.get_json()
+    required_fields = ['code', 'email', 'newPassword', 'rePassword']
+    if required_fields_exist(required_fields, payload):
+        code = payload.get('code')
+        email = payload.get('email')
+        new_password = payload.get('newPassword')
+        re_password = payload.get('rePassword')
+        Services.reset_password(code, email, new_password, re_password)
+        response = {
+            'success': True,
+            'data': None,
+            'message': 'Password changed successfully.'
+        }
+        return jsonify(response), 200
 
 @auth.route('/logout', methods=['POST'])
 @jwt_required()

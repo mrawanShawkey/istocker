@@ -135,6 +135,14 @@ def get_risk_capacity(uuid):
     risk_capacity = db.session.execute(stmt).scalar()
     return risk_capacity
 
+def get_risk_tolerance(user_id):
+    stmt = (
+        db.select(RiskAssessment.risk_tolerance_score)
+        .where(RiskAssessment.user_id==user_id)
+    )
+    risk_tolerance = db.session.execute(stmt).scalar()
+    return risk_tolerance
+
 def calculate_and_store_total_risk(uuid, risk_capacity, risk_tolerance):
     user_id = get_user_id_with_uuid(uuid)
     total_risk = round((0.3 * risk_tolerance + 0.7 * risk_capacity))
@@ -172,9 +180,21 @@ def get_and_store_risk_category(uuid, total_risk):
         db.session.commit()
     else:
         raise Errors.RecordNotFound
-    return risk_category_row.risk_category, risk_category_row.risk_category_ar, risk_category_row.description, risk_category_row.description_ar, category_score_range
+    return risk_category_row.category_name, risk_category_row.category_name_ar, risk_category_row.description, risk_category_row.description_ar, category_score_range
 
 #PATCH /questions/responses
+def calculate_risk_capacity(user_id):
+    stmt = (
+        db.select(Option.weight)
+        .join(UserResponse, Option.option_id==UserResponse.option_id)
+        .where(UserResponse.user_id==user_id, UserResponse.risk_assessment.is_(None))
+    )
+    weights = db.session.execute(stmt).scalars().all()
+    if not weights:
+        return 0
+    risk_capacity = round((sum(weights)/4) * 100)
+    return risk_capacity
+
 def edit_responses(uuid, modifications):
     user_id = get_user_id_with_uuid(uuid)
     try:
@@ -183,15 +203,20 @@ def edit_responses(uuid, modifications):
             o_id = item.get('optionId')
             if q_id is None or o_id is None:
                 raise Errors.ValidationFailed
-            response_record = UserResponse.query.filter_by(
-                user_id = user_id,
-                question_id = q_id
-            ).first()
+            stmt = (
+                db.select(UserResponse).
+                where(UserResponse.user_id == user_id, UserResponse.question_id == q_id)
+            )
+            response_record = db.session.scalar(stmt)
             if response_record:
                 response_record.option_id = o_id
             else:
                 raise Errors.RecordNotFound
         db.session.commit()
+        updated_risk_capacity = calculate_risk_capacity(user_id)
+        risk_tolerance = get_risk_tolerance(user_id)
+        updated_total_risk_score = calculate_and_store_total_risk(uuid, updated_risk_capacity, risk_tolerance)
+        get_and_store_risk_category(uuid, updated_total_risk_score)
     except (AppErrors, Exception) as e:
         db.session.rollback()
         if isinstance(e, AppErrors):

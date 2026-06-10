@@ -47,10 +47,10 @@ def change_password(uuid, old_password, new_password, re_password):
         raise Errors.ValidationFailed
     Repos.change_password(uuid, new_password)
 
-# def forgot_password(payload):
+# def forgot_password(email):
 #     pass
 
-# def reset_password(payload):
+# def reset_password(code, email, new_password, re_password):
 #     pass
 
 def logout(uuid, access_payload, refresh_payload):
