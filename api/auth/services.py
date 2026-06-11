@@ -48,10 +48,15 @@ def change_password(uuid, old_password, new_password, re_password):
     Repos.change_password(uuid, new_password)
 
 # def forgot_password(email):
-#     pass
+#     Repos.does_email_exist(email)
+#     #send code to email
 
 # def reset_password(code, email, new_password, re_password):
-#     pass
+#     #check if code is valid
+#     if new_password != re_password:
+#         raise Errors.ValidationFailed
+#     uuid, hash = Repos.get_user_by_email(email)
+#     Repos.change_password(uuid, new_password)
 
 def logout(uuid, access_payload, refresh_payload):
     uuid = convert_uuid_str_to_UUID(uuid)
