@@ -1,9 +1,15 @@
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-import joblib
+#import joblib
 import json
 import numpy as np
 import pandas as pd 
+from pathlib import Path
+import sys
+
+ROOT_DIR = Path().resolve()
+sys.path.append(str(ROOT_DIR))
+from config.paths import MARKET_DIR
 
 from config.paths import XGB_MODEL, XGB_MODEL_META
 
@@ -14,7 +20,7 @@ from api.models import StockPrice, Prediction, RecommendationSet, Recommendation
 from api.market.repositories import *
 
 latest_date = get_latest_date
-
+TESTTTTTT
 def daily_market_update():
     print('Starting daily market update...')
     Extract.fetch_tv_data(n_bars=1) #parameter to cahnge dir /raw/training , /raw/daily
