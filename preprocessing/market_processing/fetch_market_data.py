@@ -15,15 +15,18 @@ EGX30_TICKERS = [
     'COMI', 'HRHO', 'TMGH', 'FWRY', 'EAST', 'SWDY', 'ABUK',
     'AMOC', 'CCAP', 'ESRS', 'HELI', 'ORHD', 'PHDC', 'ETEL',
     'MTIE', 'CIEB', 'EXPA', 'BTFH', 'ORWE', 'MASR', 'SUGR',
-    'ISPH', 'EKHOA', 'CIRA', 'JUFO', 'DOMT', 'MFPC', 'EGAL',
+    'ISPH', 'VLMR', 'CIRA', 'JUFO', 'DOMT', 'MFPC', 'EGAL',
     'ADIB', 'EFIC'
 ]
 
-def fetch_tv_data(tv, tickers, n_bars=5000, delay=1):
+def fetch_tv_data(tv, n_bars, purpose, tickers=EGX30_TICKERS):
     """Fetch historical data from TradingView for a list of tickers."""
     for ticker in tickers:
         print(f"Fetching data from TradingView: {ticker} ...")
-        file_path = MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv"
+        if purpose == 'ml':
+            file_path = MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv"
+        if purpose == 'daily':
+            file_path = MARKET_DIR / 'daily' / f"{ticker}_TV_Data.csv"
         if file_path.exists():
             print(f"Skipping {ticker}... File already exists.")
             continue
@@ -36,12 +39,12 @@ def fetch_tv_data(tv, tickers, n_bars=5000, delay=1):
                     df = df.rename(columns={'datetime': 'date'})
                     df['date'] = df['date'].dt.date
                 
-                df.to_csv(MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv", index=False)
+                df.to_csv(file_path, index=True)
             else:
                 print(f"Warning: No data returned for {ticker}")
         except Exception as e:
             print(f"Error fetching {ticker}: {e}")
-        time.sleep(delay)
+        time.sleep(1)
 
 
 def fetch_with_retries(tv, tickers, n_bars=5000, retries=3, delay_between_attempts=3, post_delay=2):
@@ -78,37 +81,37 @@ def fetch_with_retries(tv, tickers, n_bars=5000, retries=3, delay_between_attemp
         time.sleep(post_delay)
 
 
-def fetch_ekhoa_from_yahoo(output_filename=MARKET_DIR / 'raw' / 'EKHOA_TV_Data.csv', period='10y'):
-    """Fetch EKHOA from Yahoo Finance and convert to TradingView-like format."""
-    print("Fetching missing EKHOA from Yahoo Finance...")
-    df = yf.download('EKHOA.CA', period=period)
-    if df is None or df.empty:
-        print("No data returned from Yahoo Finance for EKHOA.")
-        return False
+# def fetch_ekhoa_from_yahoo(output_filename=MARKET_DIR / 'raw' / 'EKHOA_TV_Data.csv', period='10y'):
+#     """Fetch EKHOA from Yahoo Finance and convert to TradingView-like format."""
+#     print("Fetching missing EKHOA from Yahoo Finance...")
+#     df = yf.download('EKHOA.CA', period=period)
+#     if df is None or df.empty:
+#         print("No data returned from Yahoo Finance for EKHOA.")
+#         return False
 
-    df.reset_index(inplace=True)
-    df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
+#     df.reset_index(inplace=True)
+#     df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
     
-    df.rename(columns={
-        'Date': 'date',
-        'Open': 'open',
-        'High': 'high',
-        'Low': 'low',
-        'Close': 'close',
-        'Volume': 'volume'
-    }, inplace=True)
+#     df.rename(columns={
+#         'Date': 'date',
+#         'Open': 'open',
+#         'High': 'high',
+#         'Low': 'low',
+#         'Close': 'close',
+#         'Volume': 'volume'
+#     }, inplace=True)
 
-    df['symbol'] = 'EGX:EKHOA'
-    if 'date' in df.columns:
-        df['date'] = pd.to_datetime(df['date']).dt.date
+#     df['symbol'] = 'EGX:EKHOA'
+#     if 'date' in df.columns:
+#         df['date'] = pd.to_datetime(df['date']).dt.date
 
-    cols_to_keep = ['date', 'symbol', 'open', 'high', 'low', 'close', 'volume']
-    existing_cols = [c for c in cols_to_keep if c in df.columns]
-    df = df[existing_cols]
+#     cols_to_keep = ['date', 'symbol', 'open', 'high', 'low', 'close', 'volume']
+#     existing_cols = [c for c in cols_to_keep if c in df.columns]
+#     df = df[existing_cols]
 
-    df.to_csv(output_filename, index=False)
-    print("EKHOA fetched and saved successfully.")
-    return True
+#     df.to_csv(output_filename, index=False)
+#     print("EKHOA fetched and saved successfully.")
+#     return True
 
 
 def collect_and_combine(output_file=MARKET_DIR / 'raw' / "EGX30_Full_Dataset_Ready.csv"):
@@ -171,35 +174,35 @@ def find_missing_in_combined(combined_file=MARKET_DIR / 'raw' / "EGX30_Full_Data
     return missing
 
 
-def fetch_missing_from_yahoo_map(mapping, period='10y'):
-    """Fetch tickers from Yahoo using a mapping of TV ticker -> Yahoo ticker."""
-    for tv_ticker, yf_ticker in mapping.items():
-        print(f"Fetching missing {tv_ticker} from Yahoo Finance...")
-        df = yf.download(yf_ticker, period=period)
-        if df is None or df.empty:
-            print(f"No data returned for {tv_ticker} ({yf_ticker}).")
-            continue
+# def fetch_missing_from_yahoo_map(mapping, period='10y'):
+#     """Fetch tickers from Yahoo using a mapping of TV ticker -> Yahoo ticker."""
+#     for tv_ticker, yf_ticker in mapping.items():
+#         print(f"Fetching missing {tv_ticker} from Yahoo Finance...")
+#         df = yf.download(yf_ticker, period=period)
+#         if df is None or df.empty:
+#             print(f"No data returned for {tv_ticker} ({yf_ticker}).")
+#             continue
 
-        df.reset_index(inplace=True)
-        df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
-        df.rename(columns={
-            'Date': 'date',
-            'Open': 'open',
-            'High': 'high',
-            'Low': 'low',
-            'Close': 'close',
-            'Volume': 'volume'
-        }, inplace=True)
+#         df.reset_index(inplace=True)
+#         df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
+#         df.rename(columns={
+#             'Date': 'date',
+#             'Open': 'open',
+#             'High': 'high',
+#             'Low': 'low',
+#             'Close': 'close',
+#             'Volume': 'volume'
+#         }, inplace=True)
 
-        df['symbol'] = f'EGX:{tv_ticker}'
-        if 'date' in df.columns:
-            df['date'] = pd.to_datetime(df['date']).dt.date
+#         df['symbol'] = f'EGX:{tv_ticker}'
+#         if 'date' in df.columns:
+#             df['date'] = pd.to_datetime(df['date']).dt.date
             
-        cols_to_keep = ['date', 'symbol', 'open', 'high', 'low', 'close', 'volume']
-        existing_cols = [col for col in cols_to_keep if col in df.columns]
-        df = df[existing_cols]
-        df.to_csv(MARKET_DIR / 'raw' / f"{tv_ticker}_TV_Data.csv", index=False)
-        print(f"{tv_ticker} data fallback completed.")
+#         cols_to_keep = ['date', 'symbol', 'open', 'high', 'low', 'close', 'volume']
+#         existing_cols = [col for col in cols_to_keep if col in df.columns]
+#         df = df[existing_cols]
+#         df.to_csv(MARKET_DIR / 'raw' / f"{tv_ticker}_TV_Data.csv", index=False)
+#         print(f"{tv_ticker} data fallback completed.")
 
 
 def main():
@@ -207,29 +210,29 @@ def main():
     tv = TvDatafeed()
 
     # Step 1: Broad collection run
-    fetch_tv_data(tv, EGX30_TICKERS, n_bars=5000, delay=1)
+    fetch_tv_data(tv, 5000, 'ml')
 
     # Step 2: Target flaky tickers with robust reconnect logic
-    retry_list = ['ESRS', 'MTIE', 'EXPA', 'EKHOA', 'EGAL']
+    retry_list = ['ESRS', 'MTIE', 'EXPA', 'EGAL']
     fetch_with_retries(tv, retry_list, n_bars=5000, retries=3)
 
     # Step 3: Specific data source fallback for tracking EKHOA
-    fetch_ekhoa_from_yahoo()
+    #fetch_ekhoa_from_yahoo()
 
     # Step 4: Run normalizer and combine files
     combined_file = collect_and_combine()
 
     # Step 5: Check file health metrics and apply secondary Yahoo fallbacks if needed
-    if combined_file:
-        missing = find_missing_in_combined(combined_file)
+    # if combined_file:
+    #     missing = find_missing_in_combined(combined_file)
         
-        yahoo_mapping = {'COMI': 'COMI.CA', 'ESRS': 'ESRS.CA'}
-        active_fallbacks = {k: v for k, v in yahoo_mapping.items() if k in missing}
+    #     yahoo_mapping = {'COMI': 'COMI.CA', 'ESRS': 'ESRS.CA'}
+    #     active_fallbacks = {k: v for k, v in yahoo_mapping.items() if k in missing}
         
-        if active_fallbacks:
-            fetch_missing_from_yahoo_map(active_fallbacks)
-            # Re-combine if fallbacks were needed to update the final dataset
-            collect_and_combine()
+        # if active_fallbacks:
+        #     fetch_missing_from_yahoo_map(active_fallbacks)
+        #     # Re-combine if fallbacks were needed to update the final dataset
+        #     collect_and_combine()
 
 
 if __name__ == '__main__':
