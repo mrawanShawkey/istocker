@@ -65,6 +65,8 @@ class MacroAligner:
         # Clean redundant merge column
         merged.drop(columns=['year_y'], inplace=True, errors='ignore')
         merged.rename(columns={'year_x': 'year'}, inplace=True)
+        DROP_COLS = ['macro_year']
+        merged.drop(columns=DROP_COLS, inplace=True, errors='ignore')
 
         self.aligned_df = merged
 

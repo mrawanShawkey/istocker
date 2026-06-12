@@ -19,10 +19,13 @@ EGX30_TICKERS = [
     'ADIB', 'EFIC'
 ]
 
+retry_list = ['ESRS', 'MTIE', 'EXPA', 'EGAL']
+
 def fetch_tv_data(tv, n_bars, purpose, tickers=EGX30_TICKERS):
     """Fetch historical data from TradingView for a list of tickers."""
     for ticker in tickers:
         print(f"Fetching data from TradingView: {ticker} ...")
+
         if purpose == 'ml':
             file_path = MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv"
         if purpose == 'daily':
@@ -30,6 +33,7 @@ def fetch_tv_data(tv, n_bars, purpose, tickers=EGX30_TICKERS):
         if file_path.exists():
             print(f"Skipping {ticker}... File already exists.")
             continue
+
         try:
             df = tv.get_hist(symbol=ticker, exchange='EGX', interval=Interval.in_daily, n_bars=n_bars)
             if df is not None and not df.empty:
@@ -39,7 +43,7 @@ def fetch_tv_data(tv, n_bars, purpose, tickers=EGX30_TICKERS):
                     df = df.rename(columns={'datetime': 'date'})
                     df['date'] = df['date'].dt.date
                 
-                df.to_csv(file_path, index=True)
+                df.to_csv(file_path)
             else:
                 print(f"Warning: No data returned for {ticker}")
         except Exception as e:
@@ -47,10 +51,19 @@ def fetch_tv_data(tv, n_bars, purpose, tickers=EGX30_TICKERS):
         time.sleep(1)
 
 
-def fetch_with_retries(tv, tickers, n_bars=5000, retries=3, delay_between_attempts=3, post_delay=2):
+def fetch_with_retries(tv, n_bars, purpose, tickers = retry_list, retries=3, delay_between_attempts=3, post_delay=2):
     """Attempt to fetch tickers with retry logic and reconnect on failure."""
     for ticker in tickers:
         print(f"Fetching data with retries: {ticker} ...")
+
+        if purpose == 'ml':
+            file_path = MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv"
+        if purpose == 'daily':
+            file_path = MARKET_DIR / 'daily' / f"{ticker}_TV_Data.csv"
+        if file_path.exists():
+            print(f"Skipping {ticker}... File already exists.")
+            continue
+
         success = False
         attempts_left = retries
 
@@ -63,7 +76,7 @@ def fetch_with_retries(tv, tickers, n_bars=5000, retries=3, delay_between_attemp
                         df = df.rename(columns={'datetime': 'date'})
                         df['date'] = df['date'].dt.date
                         
-                    df.to_csv(MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv", index=False)
+                    df.to_csv(file_path)
                     print(f" Successfully fetched {ticker}.")
                     success = True
                 else:
@@ -114,10 +127,15 @@ def fetch_with_retries(tv, tickers, n_bars=5000, retries=3, delay_between_attemp
 #     return True
 
 
-def collect_and_combine(output_file=MARKET_DIR / 'raw' / "EGX30_Full_Dataset_Ready.csv"):
+def collect_and_combine(purpose, output_file):
     """Read all *_TV_Data.csv files, normalize and combine them into one dataset."""
     print("Collecting and normalizing individual files... ")
-    all_files = glob.glob(str(MARKET_DIR / 'raw' / "*_TV_Data.csv"))
+
+    if purpose == 'ml':
+            all_files = glob.glob(str(MARKET_DIR / 'raw' / "*_TV_Data.csv"))
+    if purpose == 'daily':
+            all_files = glob.glob(str(MARKET_DIR / 'daily' / "*_TV_Data.csv"))
+    
     df_list = []
     companies_added = 0
 
@@ -148,11 +166,17 @@ def collect_and_combine(output_file=MARKET_DIR / 'raw' / "EGX30_Full_Dataset_Rea
         return None
 
     combined_df = pd.concat(df_list, ignore_index=True)
-    
+    combined_df = combined_df.loc[:, ~combined_df.columns.duplicated()]
+
+    # 3. Now that the dataframe is structurally clean, check for the single 'date' column
     if 'date' in combined_df.columns:
-        combined_df['date'] = pd.to_datetime(combined_df['date'], errors='coerce')
+        # Convert to string first to break the 1-row unit mapping trap, then parse
+        combined_df['date'] = pd.to_datetime(combined_df['date'].astype(str), errors='coerce')
+        
+        # Sort values safely
         combined_df.sort_values(by=['date', 'Ticker'], inplace=True)
 
+    # 4. Save and return
     combined_df.to_csv(output_file, index=False)
     print("-" * 30)
     print("Combined dataset saved successfully!")
@@ -213,14 +237,13 @@ def main():
     fetch_tv_data(tv, 5000, 'ml')
 
     # Step 2: Target flaky tickers with robust reconnect logic
-    retry_list = ['ESRS', 'MTIE', 'EXPA', 'EGAL']
-    fetch_with_retries(tv, retry_list, n_bars=5000, retries=3)
+    fetch_with_retries(tv, 5000, 'ml')
 
     # Step 3: Specific data source fallback for tracking EKHOA
     #fetch_ekhoa_from_yahoo()
 
     # Step 4: Run normalizer and combine files
-    combined_file = collect_and_combine()
+    combined_file = collect_and_combine('ml', MARKET_DIR / 'raw' / "EGX30_Full_Dataset_Ready.csv")
 
     # Step 5: Check file health metrics and apply secondary Yahoo fallbacks if needed
     # if combined_file:

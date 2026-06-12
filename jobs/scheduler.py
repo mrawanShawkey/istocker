@@ -9,26 +9,31 @@ import sys
 
 ROOT_DIR = Path().resolve()
 sys.path.append(str(ROOT_DIR))
+
 from config.paths import MARKET_DIR
-
 from config.paths import XGB_MODEL, XGB_MODEL_META
-
 import preprocessing.market_processing.fetch_market_data as Extract
 from preprocessing.market_processing.data_cleaning import MarketDataCleaner
 from api.app import db
 from api.models import StockPrice, Prediction, RecommendationSet, Recommendation
 from api.market.repositories import *
+from tvDatafeed import TvDatafeed, Interval
 
+tv = TvDatafeed()
 latest_date = get_latest_date
 
 def daily_market_update():
     print('Starting daily market update...')
-    Extract.fetch_tv_data(n_bars=1) #parameter to cahnge dir /raw/training , /raw/daily
-    processed_data = MarketDataCleaner() #check what this cleans and returns (new dirs, don't overwrite training dataset)
-    db.session.add_all(processed_data) #should take a list of row prices
-    db.session.commit()
-    return print(f'{latest_date} market data: {processed_data}')
-    
+    # Extract.fetch_tv_data(tv, 1, 'daily')
+    # Extract.fetch_with_retries(tv, 1, 'daily')
+    Extract.collect_and_combine('daily', MARKET_DIR / 'daily' / "EGX30_Full_Dataset_Ready.csv")
+    # processed_data = MarketDataCleaner() #check what this cleans and returns (new dirs, don't overwrite training dataset)
+    # db.session.add_all(processed_data) #should take a list of row prices
+    # db.session.commit()
+    # return print(f'{latest_date} market data: {processed_data}')
+
+daily_market_update()
+
 def daily_predictions():
     print('Starting daily predictions...')
     stmt = (
