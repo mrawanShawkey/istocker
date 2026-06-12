@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { authService } from '../services/authService'
-import { userStorage } from '../services/storageService'
+import { authService } from '../frontend/istocker-react/src/services/authService'
+import { userStorage } from '../frontend/istocker-react/src/services/storageService'
 
 beforeEach(() => {
   userStorage.remove()
