@@ -21,16 +21,34 @@ from tvDatafeed import TvDatafeed, Interval
 
 tv = TvDatafeed()
 latest_date = get_latest_date
+combined_file_path = MARKET_DIR / 'daily' / "EGX30_Full_Dataset_Ready.csv"
 
 def daily_market_update():
     print('Starting daily market update...')
     # Extract.fetch_tv_data(tv, 1, 'daily')
     # Extract.fetch_with_retries(tv, 1, 'daily')
-    Extract.collect_and_combine('daily', MARKET_DIR / 'daily' / "EGX30_Full_Dataset_Ready.csv")
-    # processed_data = MarketDataCleaner() #check what this cleans and returns (new dirs, don't overwrite training dataset)
-    # db.session.add_all(processed_data) #should take a list of row prices
-    # db.session.commit()
-    # return print(f'{latest_date} market data: {processed_data}')
+    daily_data = Extract.collect_and_combine('daily', combined_file_path)
+    Extract.find_missing_in_combined(combined_file_path)
+    stock_prices_df = pd.read_csv(daily_data)
+    stock_map = {s.ticker_symbol: s.stock_id for s in Stock.query.all()}
+    price_list = []
+    for _, row in stock_prices_df.iterrows():
+        date_obj = datetime.strptime(row['date'], '%Y-%m-%d %H:%M:%S').date()
+        price = StockPrice(
+            stock_id = stock_map[row['symbol']],
+            date = date_obj,
+            open_price = row['open'],
+            high_price = row['high'],
+            low_price = row['low'],
+            close_price = row['close'],
+            volume = row['volume']
+        )
+        price_list.append(price)
+        if len(price_list) >= 1000:
+            db.session.add_all(price_list)
+            price_list = []
+    db.session.add_all(price_list) 
+    db.session.commit()
 
 daily_market_update()
 

@@ -141,20 +141,22 @@ def collect_and_combine(purpose, output_file):
 
     for file in all_files:
         try:
-            df = pd.read_csv(file)
+            # 🚀 THE FIX: index_col=0 tells Pandas that the first column (the row numbers)
+            # is just the index. This prevents it from becoming an 'Unnamed: 0' data column!
+            df = pd.read_csv(file, index_col=0)
+            if df.empty:
+                continue
             
-            # Extract ticker accurately from filename instead of full string path
+            # Force lowercase all column headers to avoid any case-sensitivity bugs
+            df.columns = [str(col).lower().strip() for col in df.columns]
+                
+            # Extract ticker accurately from filename 
             ticker = Path(file).name.split('_')[0]
-
-            # Normalize header variations safely
-            if 'Unnamed: 0' in df.columns:
-                df.rename(columns={'Unnamed: 0': 'date'}, inplace=True)
-            if 'datetime' in df.columns:
-                df.rename(columns={'datetime': 'date'}, inplace=True)
-            elif 'Date' in df.columns:
-                df.rename(columns={'Date': 'date'}, inplace=True)
-
-            df['Ticker'] = ticker
+            df['ticker'] = ticker
+            
+            # Clear the index to make it a clean, single-row block unit
+            df.reset_index(drop=True, inplace=True)
+            
             df_list.append(df)
             companies_added += 1
 
@@ -165,18 +167,14 @@ def collect_and_combine(purpose, output_file):
         print("No files found to combine.")
         return None
 
-    combined_df = pd.concat(df_list, ignore_index=True)
-    combined_df = combined_df.loc[:, ~combined_df.columns.duplicated()]
-
-    # 3. Now that the dataframe is structurally clean, check for the single 'date' column
+    # Combine all 30 rows vertically
+    combined_df = pd.concat(df_list, axis=0, ignore_index=True)
+    
+    # Parse the real dates and sort cleanly
     if 'date' in combined_df.columns:
-        # Convert to string first to break the 1-row unit mapping trap, then parse
-        combined_df['date'] = pd.to_datetime(combined_df['date'].astype(str), errors='coerce')
-        
-        # Sort values safely
-        combined_df.sort_values(by=['date', 'Ticker'], inplace=True)
+        combined_df['date'] = pd.to_datetime(combined_df['date'], errors='coerce')
+        combined_df.sort_values(by=['date', 'ticker'], inplace=True)
 
-    # 4. Save and return
     combined_df.to_csv(output_file, index=False)
     print("-" * 30)
     print("Combined dataset saved successfully!")
@@ -185,14 +183,14 @@ def collect_and_combine(purpose, output_file):
     return output_file
 
 
-def find_missing_in_combined(combined_file=MARKET_DIR / 'raw' / "EGX30_Full_Dataset_Ready.csv"):
+def find_missing_in_combined(combined_file):
     try:
         df = pd.read_csv(combined_file)
     except Exception as e:
         print(f"Could not read combined file {combined_file}: {e}")
         return []
 
-    found_tickers = df['Ticker'].unique().tolist() if 'Ticker' in df.columns else []
+    found_tickers = df['ticker'].unique().tolist() if 'ticker' in df.columns else []
     missing = [t for t in EGX30_TICKERS if t not in found_tickers]
     print(f"Missing tickers after pipeline verification: {missing}")
     return missing
@@ -247,7 +245,7 @@ def main():
 
     # Step 5: Check file health metrics and apply secondary Yahoo fallbacks if needed
     # if combined_file:
-    #     missing = find_missing_in_combined(combined_file)
+    #     missing = find_missing_in_combined(MARKET_DIR / 'raw' / "EGX30_Full_Dataset_Ready.csv")
         
     #     yahoo_mapping = {'COMI': 'COMI.CA', 'ESRS': 'ESRS.CA'}
     #     active_fallbacks = {k: v for k, v in yahoo_mapping.items() if k in missing}

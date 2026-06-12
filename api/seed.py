@@ -59,7 +59,7 @@ def seed():
         print('Questions seeded.')
 
 
-    Option
+    #Option
     if Option.query.first():
        print('Options already seeded.')
     else:
