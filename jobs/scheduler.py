@@ -1,6 +1,6 @@
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-#import joblib
+# import joblib
 import json
 import numpy as np
 import pandas as pd 
@@ -20,7 +20,7 @@ from api.models import StockPrice, Prediction, RecommendationSet, Recommendation
 from api.market.repositories import *
 
 latest_date = get_latest_date
-TESTTTTTT
+
 def daily_market_update():
     print('Starting daily market update...')
     Extract.fetch_tv_data(n_bars=1) #parameter to cahnge dir /raw/training , /raw/daily
@@ -41,7 +41,7 @@ def daily_predictions():
 
     predictions = []
     #load model and meta
-    model = joblib.load(XGB_MODEL)
+    # model = joblib.load(XGB_MODEL)
     with open(XGB_MODEL_META, "r") as f:
         meta = json.load(f)
 
@@ -62,7 +62,7 @@ def daily_predictions():
     X = X.fillna(medians)
     X = X.values.astype(np.float32)
 
-    raw_preds = model.predict(X)
+    # raw_preds = model.predict(X)
     
     db.session.add_all(predictions) #check
     db.session.commit()
@@ -88,7 +88,7 @@ def daily_recommendation_sets():
         db.session.flush()
     try:
         db.session.commit()
-        print(f"Successfully created daily recommendation sets for {today}.")
+        print(f"Successfully created daily recommendation sets for {latest_date}.")
     except Exception as e:
         db.session.rollback()
         print(f"Error creating recommendation sets: {e}")
