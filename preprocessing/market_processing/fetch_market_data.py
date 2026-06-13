@@ -141,8 +141,6 @@ def collect_and_combine(purpose, output_file):
 
     for file in all_files:
         try:
-            # 🚀 THE FIX: index_col=0 tells Pandas that the first column (the row numbers)
-            # is just the index. This prevents it from becoming an 'Unnamed: 0' data column!
             df = pd.read_csv(file, index_col=0)
             if df.empty:
                 continue
