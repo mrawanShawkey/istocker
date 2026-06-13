@@ -1,0 +1,13 @@
+feature,category,count,frequency,frequency_percent
+exchange_rate,Macroeconomic,15,1.0,100.0
+inflation_rate,Macroeconomic,15,1.0,100.0
+interest_rate,Macroeconomic,15,1.0,100.0
+mom_252,Momentum / Trend,15,1.0,100.0
+gdp,Macroeconomic,14,0.9333333333333333,93.3
+vol_60,Volatility,14,0.9333333333333333,93.3
+price_to_ma252,Momentum / Trend,14,0.9333333333333333,93.3
+atr_14,Volatility,14,0.9333333333333333,93.3
+unemployment_rate,Macroeconomic,13,0.8666666666666667,86.7
+volume,Liquidity,13,0.8666666666666667,86.7
+mom_126,Momentum / Trend,13,0.8666666666666667,86.7
+ma_60_slope,Momentum / Trend,12,0.8,80.0

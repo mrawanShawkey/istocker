@@ -66,6 +66,7 @@ MODEL_COMPARISON_FILE = MODEL_COMPARISON_DIR / "model_comparison.csv"
 # -------------------------
 EDA_OUTPUT_DIR = BASE_DIR / "research" / "EDA" / "outputs"
 EDA_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+STAPLE_FEATURES_FILE = EDA_OUTPUT_DIR/ "top_stable_features.csv"
 
 # -------------------------
 # Log File

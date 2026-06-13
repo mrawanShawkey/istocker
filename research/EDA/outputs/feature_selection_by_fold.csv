@@ -1,0 +1,238 @@
+fold,feature,category
+1,open,Raw OHLC
+1,vol_60,Volatility
+1,mom_252,Momentum / Trend
+1,atr_14,Volatility
+1,inflation_rate,Macroeconomic
+1,exchange_rate,Macroeconomic
+1,unemployment_rate,Macroeconomic
+1,interest_rate,Macroeconomic
+1,quarter,Seasonality
+1,q_3,Seasonality
+1,q_1,Other
+10,ma_252,Momentum / Trend
+10,low,Raw OHLC
+10,exchange_rate,Macroeconomic
+10,inflation_rate,Macroeconomic
+10,gdp,Macroeconomic
+10,unemployment_rate,Macroeconomic
+10,vol_60,Volatility
+10,interest_rate,Macroeconomic
+10,mom_252,Momentum / Trend
+10,price_to_ma252,Momentum / Trend
+10,atr_14,Volatility
+10,ma_60_slope,Momentum / Trend
+10,mom_126,Momentum / Trend
+10,volume,Liquidity
+10,quarter,Seasonality
+11,open,Raw OHLC
+11,exchange_rate,Macroeconomic
+11,inflation_rate,Macroeconomic
+11,gdp,Macroeconomic
+11,unemployment_rate,Macroeconomic
+11,interest_rate,Macroeconomic
+11,vol_60,Volatility
+11,mom_252,Momentum / Trend
+11,price_to_ma252,Momentum / Trend
+11,atr_14,Volatility
+11,realized_vol_20,Volatility
+11,ma_60_slope,Momentum / Trend
+11,mom_126,Momentum / Trend
+11,mom60_x_vol20,Momentum / Trend
+11,mom_60,Momentum / Trend
+11,price_to_ma60,Momentum / Trend
+11,volume,Liquidity
+11,quarter,Seasonality
+12,ma_60,Momentum / Trend
+12,exchange_rate,Macroeconomic
+12,inflation_rate,Macroeconomic
+12,gdp,Macroeconomic
+12,unemployment_rate,Macroeconomic
+12,interest_rate,Macroeconomic
+12,vol_60,Volatility
+12,mom_252,Momentum / Trend
+12,price_to_ma252,Momentum / Trend
+12,atr_14,Volatility
+12,realized_vol_20,Volatility
+12,ma_60_slope,Momentum / Trend
+12,mom_126,Momentum / Trend
+12,mom60_x_vol20,Momentum / Trend
+12,volume,Liquidity
+12,quarter,Seasonality
+13,ma_60,Momentum / Trend
+13,exchange_rate,Macroeconomic
+13,inflation_rate,Macroeconomic
+13,gdp,Macroeconomic
+13,unemployment_rate,Macroeconomic
+13,interest_rate,Macroeconomic
+13,vol_60,Volatility
+13,mom_252,Momentum / Trend
+13,price_to_ma252,Momentum / Trend
+13,atr_14,Volatility
+13,realized_vol_20,Volatility
+13,ma_60_slope,Momentum / Trend
+13,mom_126,Momentum / Trend
+13,mom_60,Momentum / Trend
+13,mom60_x_vol20,Momentum / Trend
+13,price_to_ma60,Momentum / Trend
+13,month,Seasonality
+13,volume,Liquidity
+14,exchange_rate,Macroeconomic
+14,inflation_rate,Macroeconomic
+14,open,Raw OHLC
+14,gdp,Macroeconomic
+14,unemployment_rate,Macroeconomic
+14,interest_rate,Macroeconomic
+14,vol_60,Volatility
+14,mom_252,Momentum / Trend
+14,price_to_ma252,Momentum / Trend
+14,atr_14,Volatility
+14,ma_60_slope,Momentum / Trend
+14,mom_126,Momentum / Trend
+14,mom_60,Momentum / Trend
+14,mom60_x_vol20,Momentum / Trend
+14,quarter,Seasonality
+14,volume,Liquidity
+15,ma_60,Momentum / Trend
+15,exchange_rate,Macroeconomic
+15,inflation_rate,Macroeconomic
+15,gdp,Macroeconomic
+15,unemployment_rate,Macroeconomic
+15,interest_rate,Macroeconomic
+15,vol_60,Volatility
+15,mom_252,Momentum / Trend
+15,price_to_ma252,Momentum / Trend
+15,atr_14,Volatility
+15,ma_60_slope,Momentum / Trend
+15,mom_126,Momentum / Trend
+15,mom_60,Momentum / Trend
+15,mom60_x_vol20,Momentum / Trend
+15,quarter,Seasonality
+15,volume,Liquidity
+2,ma_252,Momentum / Trend
+2,low,Raw OHLC
+2,mom_252,Momentum / Trend
+2,price_to_ma252,Momentum / Trend
+2,exchange_rate,Macroeconomic
+2,inflation_rate,Macroeconomic
+2,gdp,Macroeconomic
+2,interest_rate,Macroeconomic
+2,quarter,Seasonality
+2,q_1,Other
+3,ma_252,Momentum / Trend
+3,low,Raw OHLC
+3,vol_60,Volatility
+3,price_to_ma252,Momentum / Trend
+3,mom_252,Momentum / Trend
+3,exchange_rate,Macroeconomic
+3,inflation_rate,Macroeconomic
+3,gdp,Macroeconomic
+3,mom_126,Momentum / Trend
+3,atr_14,Volatility
+3,interest_rate,Macroeconomic
+3,quarter,Seasonality
+3,volume,Liquidity
+3,q_3,Seasonality
+4,ma_252,Momentum / Trend
+4,low,Raw OHLC
+4,price_to_ma252,Momentum / Trend
+4,vol_60,Volatility
+4,mom_252,Momentum / Trend
+4,gdp,Macroeconomic
+4,exchange_rate,Macroeconomic
+4,inflation_rate,Macroeconomic
+4,unemployment_rate,Macroeconomic
+4,mom_126,Momentum / Trend
+4,ma_60_slope,Momentum / Trend
+4,interest_rate,Macroeconomic
+4,atr_14,Volatility
+4,mom60_x_vol20,Momentum / Trend
+4,mom_60,Momentum / Trend
+4,month,Seasonality
+4,volume,Liquidity
+5,low,Raw OHLC
+5,vol_60,Volatility
+5,price_to_ma252,Momentum / Trend
+5,mom_252,Momentum / Trend
+5,exchange_rate,Macroeconomic
+5,gdp,Macroeconomic
+5,inflation_rate,Macroeconomic
+5,unemployment_rate,Macroeconomic
+5,interest_rate,Macroeconomic
+5,mom_126,Momentum / Trend
+5,ma_60_slope,Momentum / Trend
+5,atr_14,Volatility
+5,mom60_x_vol20,Momentum / Trend
+5,mom_60,Momentum / Trend
+5,month,Seasonality
+5,volume,Liquidity
+5,q_1,Other
+6,low,Raw OHLC
+6,exchange_rate,Macroeconomic
+6,gdp,Macroeconomic
+6,unemployment_rate,Macroeconomic
+6,inflation_rate,Macroeconomic
+6,vol_60,Volatility
+6,price_to_ma252,Momentum / Trend
+6,interest_rate,Macroeconomic
+6,mom_252,Momentum / Trend
+6,ma_60_slope,Momentum / Trend
+6,atr_14,Volatility
+6,realized_vol_20,Volatility
+6,mom_126,Momentum / Trend
+6,mom60_x_vol20,Momentum / Trend
+6,mom_60,Momentum / Trend
+6,month,Seasonality
+6,volume,Liquidity
+6,q_1,Other
+7,low,Raw OHLC
+7,exchange_rate,Macroeconomic
+7,gdp,Macroeconomic
+7,unemployment_rate,Macroeconomic
+7,inflation_rate,Macroeconomic
+7,vol_60,Volatility
+7,mom_252,Momentum / Trend
+7,price_to_ma252,Momentum / Trend
+7,atr_14,Volatility
+7,interest_rate,Macroeconomic
+7,ma_60_slope,Momentum / Trend
+7,mom_126,Momentum / Trend
+7,mom_60,Momentum / Trend
+7,volume,Liquidity
+7,quarter,Seasonality
+7,q_1,Other
+8,low,Raw OHLC
+8,exchange_rate,Macroeconomic
+8,inflation_rate,Macroeconomic
+8,gdp,Macroeconomic
+8,unemployment_rate,Macroeconomic
+8,vol_60,Volatility
+8,price_to_ma252,Momentum / Trend
+8,mom_252,Momentum / Trend
+8,interest_rate,Macroeconomic
+8,atr_14,Volatility
+8,realized_vol_20,Volatility
+8,mom_126,Momentum / Trend
+8,ma_60_slope,Momentum / Trend
+8,mom60_x_vol20,Momentum / Trend
+8,mom_60,Momentum / Trend
+8,price_to_ma60,Momentum / Trend
+8,volume,Liquidity
+8,quarter,Seasonality
+9,low,Raw OHLC
+9,exchange_rate,Macroeconomic
+9,inflation_rate,Macroeconomic
+9,gdp,Macroeconomic
+9,unemployment_rate,Macroeconomic
+9,vol_60,Volatility
+9,interest_rate,Macroeconomic
+9,price_to_ma252,Momentum / Trend
+9,mom_252,Momentum / Trend
+9,atr_14,Volatility
+9,ma_60_slope,Momentum / Trend
+9,mom_126,Momentum / Trend
+9,mom60_x_vol20,Momentum / Trend
+9,mom_60,Momentum / Trend
+9,price_to_ma60,Momentum / Trend
+9,volume,Liquidity
+9,quarter,Seasonality
