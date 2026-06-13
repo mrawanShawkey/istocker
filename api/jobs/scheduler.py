@@ -14,11 +14,12 @@ from config.paths import MARKET_DIR
 from config.paths import XGB_MODEL, XGB_MODEL_META
 import preprocessing.market_processing.fetch_market_data as Extract
 from preprocessing.market_processing.data_cleaning import MarketDataCleaner
-from api.app import db
+from api.app import create_app, db
 from api.models import StockPrice, Prediction, RecommendationSet, Recommendation
 from api.market.repositories import *
 from tvDatafeed import TvDatafeed, Interval
 
+app = create_app()
 tv = TvDatafeed()
 latest_date = get_latest_date
 combined_file_path = MARKET_DIR / 'daily' / "EGX30_Full_Dataset_Ready.csv"
@@ -28,27 +29,32 @@ def daily_market_update():
     # Extract.fetch_tv_data(tv, 1, 'daily')
     # Extract.fetch_with_retries(tv, 1, 'daily')
     daily_data = Extract.collect_and_combine('daily', combined_file_path)
-    Extract.find_missing_in_combined(combined_file_path)
+    #Extract.find_missing_in_combined(combined_file_path)
     stock_prices_df = pd.read_csv(daily_data)
-    stock_map = {s.ticker_symbol: s.stock_id for s in Stock.query.all()}
-    price_list = []
-    for _, row in stock_prices_df.iterrows():
-        date_obj = datetime.strptime(row['date'], '%Y-%m-%d %H:%M:%S').date()
-        price = StockPrice(
-            stock_id = stock_map[row['symbol']],
-            date = date_obj,
-            open_price = row['open'],
-            high_price = row['high'],
-            low_price = row['low'],
-            close_price = row['close'],
-            volume = row['volume']
-        )
-        price_list.append(price)
-        if len(price_list) >= 1000:
-            db.session.add_all(price_list)
+    with app.app_context():
+        try:
+            stock_map = {s.ticker_symbol: s.stock_id for s in Stock.query.all()}
             price_list = []
-    db.session.add_all(price_list) 
-    db.session.commit()
+            for _, row in stock_prices_df.iterrows():
+                date_obj = datetime.strptime(row['date'], '%Y-%m-%d').date()
+                price = StockPrice(
+                    stock_id = stock_map[row['symbol']],
+                    date = date_obj,
+                    open_price = row['open'],
+                    high_price = row['high'],
+                    low_price = row['low'],
+                    close_price = row['close'],
+                    volume = row['volume']
+                )
+                price_list.append(price)
+                if len(price_list) >= 1000:
+                    db.session.add_all(price_list)
+                    price_list = []
+            db.session.add_all(price_list) 
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Database sync failed: {e}")
 
 daily_market_update()
 

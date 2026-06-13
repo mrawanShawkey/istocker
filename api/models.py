@@ -243,7 +243,6 @@ class StockPrice(db.Model):
         return f'<StockPrice {self.price_id} for stock {self.stock_id} on {self.date} closed at {self.close_price}>'
     
 class Prediction(db.Model):
-    # Model output, not user specific. Stores predicted one year return for every stock. Refreshed daily.
     __tablename__ = 'predictions'
 
     prediction_id: Mapped[int] = mapped_column(Integer, primary_key=True)

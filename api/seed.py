@@ -123,7 +123,7 @@ def seed():
         stock_map = {s.ticker_symbol: s.stock_id for s in Stock.query.all()}
         price_list = []
         for _, row in stock_prices_df.iterrows():
-            date_obj = datetime.strptime(row['date'], '%Y-%m-%d %H:%M:%S').date()
+            date_obj = datetime.strptime(row['date'], '%Y-%m-%d').date()
             price = StockPrice(
                 stock_id = stock_map[row['symbol']],
                 date = date_obj,
