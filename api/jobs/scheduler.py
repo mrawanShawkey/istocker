@@ -3,7 +3,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import joblib
 import json
 import numpy as np
-import pandas as pd 
+import pandas as pd
+import os
+import glob
 from pathlib import Path
 import sys
 
@@ -28,13 +30,30 @@ def daily_market_update():
     print('Starting daily market update...')
     Extract.fetch_tv_data(tv, 1, 'daily')
     Extract.fetch_with_retries(tv, 1, 'daily')
+
     daily_data = Extract.collect_and_combine('daily', combined_file_path)
     Extract.find_missing_in_combined(combined_file_path)
+
+    if daily_data and os.path.exists(daily_data):
+        print('Deleting individual raw files...')
+        raw_files = glob.glob(str(MARKET_DIR / 'daily' / '*_TV_Data.csv'))
+        for file in raw_files:
+            try:
+                os.remove(file)
+            except Exception as e:
+                print(f'Could not delete {file}: {e}')
+    
     stock_prices_df = pd.read_csv(daily_data)
+
     try:
         stock_map = {s.ticker_symbol: s.stock_id for s in Stock.query.all()}
         price_list = []
+
         for _, row in stock_prices_df.iterrows():
+            ticker_symbol = row.get('symbol', row.get('ticker'))
+            if ':' in str(ticker_symbol):
+                ticker_symbol = str(ticker_symbol).split(':')[-1]
+            
             date_obj = datetime.strptime(row['date'], '%Y-%m-%d').date()
             price = StockPrice(
                 stock_id = stock_map[row['symbol']],
@@ -46,11 +65,14 @@ def daily_market_update():
                 volume = row['volume']
             )
             price_list.append(price)
+
             if len(price_list) >= 1000:
                 db.session.add_all(price_list)
                 price_list = []
-        db.session.add_all(price_list) 
+        if price_list:        
+            db.session.add_all(price_list) 
         db.session.commit()
+
     except Exception as e:
         db.session.rollback()
         print(f"Database sync failed: {e}")
@@ -59,25 +81,43 @@ def daily_market_update():
 def daily_predictions(daily_data):
     print('Starting daily predictions...')
 
-    #load model and meta
-    model = joblib.load(XGB_MODEL)
-    with open(XGB_MODEL_META, "r") as f:
-        meta = json.load(f)
+    if not daily_data or not os.path.exists(daily_data):
+        raise FileNotFoundError
 
-    features = meta["features"]
-    medians  = pd.Series(meta["medians"])
+    try:
+        #load model and meta
+        model = joblib.load(XGB_MODEL)
+        with open(XGB_MODEL_META, "r") as f:
+            meta = json.load(f)
 
-    df = pd.read_csv(daily_data)
+        features = meta["features"]
+        medians  = pd.Series(meta["medians"])
 
-    X = df[features].copy()
-    X = X.replace([np.inf, -np.inf], np.nan)
-    X = X.fillna(medians)
-    X = X.values.astype(np.float32)
+        df = pd.read_csv(daily_data)
 
-    raw_preds = model.predict(X)
+        X = df[features].copy()
+        X = X.replace([np.inf, -np.inf], np.nan)
+        X = X.fillna(medians)
+        X = X.values.astype(np.float32)
+
+        raw_preds = model.predict(X)
     
-    db.session.add_all(raw_preds) #check
-    db.session.commit()
+        db.session.add_all(raw_preds) #check
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        print('ML pipeline or DB commit failed: {e}')
+        raise e
+    
+    finally:
+        if daily_data and os.path.exists(daily_data):
+            try:
+                os.remove(daily_data)
+                print('Deleted market data csv for today.')
+            except Exception as e:
+                print('Market data csv was not deleted.')
+
     return print(f'Today\'s predictions: {raw_preds}')
 
 def daily_recommendation_sets(latest_date):
