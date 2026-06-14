@@ -180,7 +180,7 @@ def get_and_store_risk_category(uuid, total_risk):
         db.session.commit()
     else:
         raise Errors.RecordNotFound
-    return risk_category_row.category_name, risk_category_row.category_name_ar, risk_category_row.description, risk_category_row.description_ar, category_score_range
+    return risk_category_row.category_name.value, risk_category_row.category_name_ar.value, risk_category_row.description, risk_category_row.description_ar, category_score_range
 
 #PATCH /questions/responses
 def calculate_risk_capacity(user_id):
