@@ -76,6 +76,7 @@ def daily_market_update():
     except Exception as e:
         db.session.rollback()
         print(f"Database sync failed: {e}")
+        
     return daily_data
 
 def daily_predictions(daily_data):

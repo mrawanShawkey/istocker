@@ -16,12 +16,12 @@ def get_market_data():
         for ticker, price in all_stocks_current_prices.items()
     ]
     top_movers = Repos.get_top_movers(previous_date, latest_date)
-    #top_sectors = Repos.get_top_sectors()
+    top_sectors = Repos.get_top_sectors()
     data = {
         'date': latest_date,
         'currentPrices': combined_current_prices,
         'topMovers': top_movers,
-        #'topSectors': top_sectors,
+        'topSectors': top_sectors,
     }
     return data
 
