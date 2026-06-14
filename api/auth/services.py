@@ -2,7 +2,12 @@ import api.auth.repositories as Repos
 import api.common.errors.errors as Errors
 from api.common.utils.utils import *
 from api.common.extentions.extentions import bcrypt
-from flask_jwt_extended import create_access_token, create_refresh_token
+from api.config import Config
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import timedelta
+from flask_jwt_extended import create_access_token, create_refresh_token, decode_token
 
 def register(first_name, last_name, email, password):
     if Repos.does_email_exist(email):
@@ -47,16 +52,32 @@ def change_password(uuid, old_password, new_password, re_password):
         raise Errors.ValidationFailed
     Repos.change_password(uuid, new_password)
 
-# def forgot_password(email):
-#     Repos.does_email_exist(email)
-#     #send code to email
+def forgot_password(email):
+    if not Repos.does_email_exist(email):
+        raise Errors.UserNotFound
+    reset_token = create_access_token(email)
+    subject = 'iStocker password reset.'
+    body = f'Enter this code to reset your password (expires in 15 mins): {reset_token}.'
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = Config.EMAIL_ADDRESS
+        msg['To'] = email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+        server = smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT)
+        server.starttls()
+        server.login(Config.EMAIL_ADDRESS, Config.EMAIL_PASSWORD)
+        server.sendmail(Config.EMAIL_ADDRESS, email, msg.as_string())
+        server.quit()
+    except:
+        raise Errors.DatabaseError
 
-# def reset_password(code, email, new_password, re_password):
-#     #check if code is valid
-#     if new_password != re_password:
-#         raise Errors.ValidationFailed
-#     uuid, hash = Repos.get_user_by_email(email)
-#     Repos.change_password(uuid, new_password)
+def reset_password(code, email, new_password, re_password):
+    decoded_code = decode_token(code)
+    if new_password != re_password:
+        raise Errors.ValidationFailed
+    uuid, hash = Repos.get_user_by_email(email)
+    Repos.change_password(uuid, new_password)
 
 def logout(uuid, access_payload, refresh_payload):
     uuid = convert_uuid_str_to_UUID(uuid)
