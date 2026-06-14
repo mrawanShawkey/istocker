@@ -1,0 +1,270 @@
+/* result.css */
+.result-wrap { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+
+/* ── Risk Hero ── */
+.risk-hero {
+  background: linear-gradient(160deg, #0e0b22 0%, #1a0d40 50%, #0c1530 100%);
+  border: 1px solid rgba(109,40,217,0.3);
+  border-radius: var(--r-xl);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative; overflow: hidden;
+  box-shadow: 0 8px 60px rgba(109,40,217,0.22);
+}
+.risk-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(109,40,217,0.25) 0%, transparent 65%);
+  pointer-events: none;
+}
+.risk-hero h2 {
+  position: relative;
+  font-family: var(--font-en); font-size: 1.65rem; font-weight: 800;
+  margin-bottom: .9rem;
+}
+.ar .risk-hero h2 { font-family: var(--font-ar); }
+
+.risk-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  color: #fff; border-radius: var(--r-sm);
+  padding: .32rem 1.15rem; font-size: .84rem; font-weight: 700;
+  margin-bottom: 1.35rem; position: relative;
+  box-shadow: 0 4px 18px var(--purple-glow);
+}
+.risk-hero-desc {
+  position: relative;
+  color: rgba(255,255,255,.72); font-size: .86rem;
+  line-height: 1.7; max-width: 520px;
+  margin: 0 auto 1.75rem;
+}
+.risk-metrics {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: .85rem; margin-bottom: 1.75rem; position: relative;
+}
+@media(max-width:500px){.risk-metrics{grid-template-columns:repeat(3,1fr);}}
+.metric {
+  background: rgba(0,0,0,0.38);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--r);
+  padding: 1.1rem .75rem; text-align: center;
+}
+.metric-label {
+  font-size: .7rem; color: var(--gray);
+  margin-bottom: .35rem;
+  display: flex; align-items: center; justify-content: center; gap: .3rem;
+}
+.metric-val { font-family: var(--font-en); font-size: 2.1rem; font-weight: 800; line-height: 1; }
+.metric-tip {
+  cursor: help; font-size: .68rem; color: var(--gray-2);
+  border: 1px solid var(--gray-3); border-radius: 50%;
+  width: 15px; height: 15px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.risk-ai {
+  position: relative; font-size: .84rem; color: rgba(255,255,255,.75);
+  line-height: 1.7; max-width: 640px; margin: 0 auto;
+}
+
+/* ── Recommended Stocks ── */
+.rec-section { margin-bottom: 2rem; }
+.rec-section-head {
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap;
+  gap: .75rem; margin-bottom: .35rem;
+}
+.rec-section-head h2 { font-family: var(--font-en); font-size: 1.35rem; font-weight: 800; }
+.ar .rec-section-head h2 { font-family: var(--font-ar); }
+.rec-section > .rec-sub { color: var(--gray); font-size: .81rem; margin-bottom: 1.2rem; }
+
+.refresh-btn {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .42rem 1rem;
+  background: rgba(109,40,217,0.14);
+  border: 1px solid rgba(109,40,217,0.35);
+  border-radius: var(--r-sm);
+  font-size: .78rem; font-weight: 600;
+  color: #b9a0f8; cursor: pointer;
+  transition: all var(--t) var(--ease);
+}
+.refresh-btn:hover { background: rgba(109,40,217,0.25); border-color: rgba(109,40,217,0.55); }
+.refresh-spin { display: inline-block; }
+.refresh-btn.spinning .refresh-spin { animation: spin .7s linear infinite; }
+
+/* Stock grid */
+.stock-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+@media(max-width:640px){.stock-grid{grid-template-columns:1fr;}}
+.stock-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.35rem 1.25rem;
+  transition: all var(--t) var(--ease);
+  display: flex; flex-direction: column;
+}
+.stock-card:hover { border-color: rgba(109,40,217,0.45); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(109,40,217,0.1); }
+.stock-sector-tag {
+  display: inline-block; border-radius: 999px;
+  padding: .17rem .68rem; font-size: .68rem; font-weight: 700;
+  margin-bottom: .7rem; align-self: flex-start;
+}
+.tag-tech { background: rgba(6,182,212,0.15); color: #22d3ee; border: 1px solid rgba(6,182,212,0.25); }
+.tag-re   { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+.tag-fin  { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+.tag-cons { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+
+/* Code prominent at top */
+.stock-code { font-weight: 800; font-size: 1.15rem; letter-spacing: .02em; margin-bottom: .15rem; }
+.stock-full-name { font-size: .72rem; color: var(--gray); margin-bottom: .6rem; line-height: 1.4; }
+.stock-price-row { display: flex; align-items: baseline; gap: .5rem; margin-bottom: .2rem; }
+.stock-price { font-family: var(--font-en); font-size: 1.3rem; font-weight: 800; }
+.stock-chg { display: flex; align-items: center; gap: .25rem; font-size: .77rem; font-weight: 600; }
+.up   { color: var(--green); }
+.down { color: var(--red); }
+.stock-desc { font-size: .74rem; color: var(--gray); line-height: 1.55; margin-top: auto; padding-top: .75rem; }
+
+.updated-at { color: var(--gray-2); font-size: .76rem; font-style: italic; margin-top: .85rem; }
+
+/* ── Retest button ── */
+.retest-btn {
+  display: block; margin: 1.75rem auto;
+  padding: .65rem 2.75rem;
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+  color: #fff; border: none; border-radius: var(--r-sm);
+  font-size: .88rem; font-weight: 800;
+  letter-spacing: .07em; text-transform: uppercase;
+  cursor: pointer; transition: all var(--t);
+}
+.retest-btn:hover { opacity: .88; transform: scale(1.02); }
+
+/* ── Security Alerts ── */
+.alerts-box {
+  background: linear-gradient(135deg, #1c0505, #230a0a);
+  border: 1px solid rgba(239,68,68,0.22);
+  border-radius: var(--r-xl);
+  padding: 1.6rem 1.75rem;
+  margin-bottom: 2rem;
+}
+.alerts-title {
+  color: #fca5a5; font-weight: 800; font-size: .9rem;
+  letter-spacing: .07em; margin-bottom: 1rem; text-transform: uppercase;
+}
+.alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+@media(max-width:560px){.alerts-grid{grid-template-columns:1fr;}}
+.alert-card {
+  background: rgba(239,68,68,0.05);
+  border: 1px solid rgba(239,68,68,0.15);
+  border-radius: var(--r);
+  padding: 1rem 1.1rem;
+}
+.alert-card h4 {
+  font-size: .77rem; font-weight: 800;
+  color: #fca5a5; letter-spacing: .06em;
+  text-transform: uppercase; margin-bottom: .4rem;
+}
+.alert-card p { font-size: .76rem; color: var(--gray); line-height: 1.6; }
+
+/* ── Next Steps ── */
+.next-steps {
+  background: var(--bg-card);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-xl);
+  padding: 1.75rem 2rem;
+}
+.next-steps h2 {
+  font-family: var(--font-en); font-size: 1.1rem; font-weight: 800;
+  margin-bottom: 1rem; letter-spacing: .04em;
+}
+.ar .next-steps h2 { font-family: var(--font-ar); }
+.steps-list {
+  padding-left: 1.25rem;
+  display: flex; flex-direction: column; gap: .7rem;
+  margin: 0;
+}
+.ar .steps-list { padding-left: 0; padding-right: 1.25rem; }
+.steps-list li { font-size: .83rem; color: var(--gray); line-height: 1.65; }
+.steps-list a { color: var(--purple-pale); text-decoration: underline; }
+.steps-list a:hover { color: var(--purple-light); }
+
+/* shared spin */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════════
+   RISK METRIC TOOLTIP — hover popover with ranges
+   Matches screenshot: dark card, two-column rows
+   ══════════════════════════════════════════════ */
+.metric-tip {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: .68rem; font-weight: 700;
+  color: var(--gray);
+  cursor: help;
+  margin-left: .35rem;
+  position: relative;
+  transition: border-color .15s, color .15s;
+  vertical-align: middle;
+  user-select: none;
+}
+.metric-tip:hover, .metric-tip:focus {
+  border-color: var(--purple-light);
+  color: var(--white);
+  outline: none;
+}
+
+/* The popover box */
+.metric-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%; transform: translateX(-50%);
+  min-width: 230px;
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r-lg);
+  padding: .85rem 1rem;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  z-index: 100;
+  pointer-events: none;
+  animation: tooltipIn .15s ease;
+}
+@keyframes tooltipIn {
+  from { opacity:0; transform:translateX(-50%) translateY(6px) }
+  to   { opacity:1; transform:translateX(-50%) translateY(0)   }
+}
+
+/* Arrow pointing down */
+.metric-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%; transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: #1a1a2e;
+}
+
+/* Each range row: "0 → 30   Low Risk Profile" */
+.metric-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .32rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.metric-tooltip-row:last-child { border-bottom: none; }
+
+.metric-tooltip-range {
+  font-family: var(--font-en);
+  font-size: .73rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  min-width: 70px;
+}
+.metric-tooltip-label {
+  font-size: .76rem;
+  color: var(--white);
+  font-weight: 500;
+  line-height: 1.35;
+}

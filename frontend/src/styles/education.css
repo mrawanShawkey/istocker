@@ -1,0 +1,347 @@
+/* education.css — Educational Content page */
+
+/* ══════════════════════════════════════════════
+   HERO — "Your Journey to Smart Investing"
+   Matches screenshot: centered, purple glow bg
+   ══════════════════════════════════════════════ */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #070712 0%, #0f0b24 45%, #080d1e 100%);
+  padding: 4.5rem 2rem 3.5rem;
+}
+.hero-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 65% at 50% 50%, rgba(109,40,217,0.28) 0%, transparent 68%);
+  pointer-events: none;
+}
+.hero-inner--centered {
+  position: relative; z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+/* Big title: "Your Journey to" (white) + "Smart Investing" (purple gradient) */
+.hero-title {
+  font-family: var(--font-en);
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--white);
+  margin: 0;
+}
+.ar .hero-title { font-family: var(--font-ar); }
+
+.hero-title-accent {
+  display: block;
+  font-style: normal;
+  background: linear-gradient(135deg, var(--purple-light) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  color: rgba(255,255,255,0.62);
+  font-size: .93rem;
+  line-height: 1.72;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════
+   EDUCATIONAL CARD SECTION
+   ══════════════════════════════════════════════ */
+.edu-section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.75rem 1.5rem 1.5rem;
+}
+
+/* The outer card — matches the dark card with purple glow border in screenshot */
+.edu-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(109,40,217,0.22);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow:
+    0 4px 32px rgba(0,0,0,0.45),
+    0 0 60px rgba(109,40,217,0.08);
+}
+
+/* Card header: "Stock Market" + subtitle */
+.edu-card-header {
+  text-align: center;
+  padding: 2rem 2rem 1.35rem;
+  border-bottom: 1px solid var(--border-2);
+}
+.edu-card-title {
+  font-family: var(--font-en);
+  font-size: 1.55rem;
+  font-weight: 800;
+  margin-bottom: .35rem;
+  color: var(--white);
+}
+.ar .edu-card-title { font-family: var(--font-ar); }
+.edu-card-sub {
+  color: var(--gray);
+  font-size: .84rem;
+  line-height: 1.55;
+}
+.edu-card-sub em {
+  font-style: italic;
+  color: var(--purple-pale);
+}
+
+/* ══════════════════════════════════════════════
+   LEVEL TABS — Beginner / Mid-Level / Advanced
+   Screenshot shows pill-shaped tabs with icon + label
+   Active tab: filled purple pill
+   ══════════════════════════════════════════════ */
+.edu-tabs {
+  display: flex;
+  gap: .5rem;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border-2);
+  background: rgba(0,0,0,0.15);
+}
+.edu-tab {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .48rem 1.1rem;
+  font-size: .83rem;
+  font-weight: 600;
+  color: var(--gray);
+  border: 1px solid var(--border-2);
+  background: rgba(255,255,255,0.03);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .18s var(--ease);
+  white-space: nowrap;
+}
+.edu-tab:hover {
+  color: var(--white);
+  border-color: rgba(109,40,217,0.4);
+  background: rgba(109,40,217,0.1);
+}
+.edu-tab--active {
+  background: linear-gradient(135deg, rgba(109,40,217,0.7), rgba(139,92,246,0.7));
+  border-color: var(--purple-light);
+  color: #fff;
+  box-shadow: 0 2px 14px rgba(109,40,217,0.35);
+}
+.edu-tab-icon { font-size: .95rem; }
+
+/* ══════════════════════════════════════════════
+   CONTENT AREA — video left, lesson list right
+   ══════════════════════════════════════════════ */
+.edu-content {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+}
+@media (max-width: 720px) {
+  .edu-content { grid-template-columns: 1fr; }
+}
+
+/* Left column: video */
+.edu-video-col {
+  padding: 1.5rem;
+  border-right: 1px solid var(--border-2);
+}
+.ar .edu-video-col {
+  border-right: none;
+  border-left: 1px solid var(--border-2);
+}
+@media (max-width: 720px) {
+  .edu-video-col {
+    border-right: none;
+    border-bottom: 1px solid var(--border-2);
+  }
+}
+
+/* Right column: lesson list */
+.edu-list-col {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 360px;
+}
+
+/* ══════════════════════════════════════════════
+   VIDEO PLAYER
+   Screenshot: thumbnail with play button centered,
+   duration badge bottom-right
+   ══════════════════════════════════════════════ */
+.video-player {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 16:9 video wrapper */
+.video-frame-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: #000;
+}
+.video-frame {
+  width: 100%; height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Thumbnail */
+.video-thumb {
+  width: 100%; height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a14;
+  cursor: pointer;
+}
+.video-thumb-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .75;
+  transition: opacity .2s;
+}
+.video-thumb:hover .video-thumb-img { opacity: .88; }
+
+/* Dark overlay to make play button pop */
+.video-thumb-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.28);
+  z-index: 1;
+}
+
+/* Purple play button — centered */
+.video-play-btn {
+  position: relative; z-index: 2;
+  width: 62px; height: 62px;
+  background: rgba(109,40,217,0.88);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 28px rgba(109,40,217,0.55);
+  transition: transform .18s, background .18s;
+}
+.video-thumb:hover .video-play-btn {
+  transform: scale(1.1);
+  background: var(--purple);
+}
+/* nudge icon right to visually center inside circle */
+.video-play-btn svg { margin-left: 4px; }
+
+/* Duration badge — bottom right corner */
+.video-duration {
+  position: absolute;
+  bottom: .55rem;
+  right: .65rem;
+  background: rgba(0,0,0,0.78);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 600;
+  padding: .12rem .42rem;
+  border-radius: 4px;
+  z-index: 3;
+}
+
+/* ══════════════════════════════════════════════
+   LESSON LIST
+   Screenshot: numbered rows, active = purple bg
+   ══════════════════════════════════════════════ */
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+}
+.lesson-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .85rem 1.1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 1px solid var(--border-2);
+  transition: background .16s;
+  width: 100%;
+}
+.ar .lesson-row { text-align: right; }
+.lesson-row:last-child { border-bottom: none; }
+.lesson-row:hover { background: rgba(109,40,217,0.07); }
+.lesson-row--active { background: rgba(109,40,217,0.13); }
+
+/* Circle number */
+.lesson-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(109,40,217,0.18);
+  border: 1px solid rgba(109,40,217,0.3);
+  color: var(--purple-pale);
+  font-size: .72rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.lesson-row--active .lesson-num {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+}
+
+.lesson-info { flex: 1; min-width: 0; }
+.lesson-title {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: .12rem;
+}
+.lesson-row--active .lesson-title { color: var(--purple-pale); }
+.lesson-dur { font-size: .68rem; color: var(--gray-2); }
+
+.lesson-arrow {
+  color: var(--gray-2);
+  font-size: .85rem;
+  flex-shrink: 0;
+}
+.lesson-row--active .lesson-arrow { color: var(--purple-pale); }
+
+/* ══════════════════════════════════════════════
+   BOTTOM CTA — "Ready to Start Your Investment Journey?"
+   ══════════════════════════════════════════════ */
+.home-cta {
+  text-align: center;
+  padding: 3.5rem 2rem 4.5rem;
+}
+.home-cta h2 {
+  font-family: var(--font-en);
+  font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  margin-bottom: .55rem;
+  color: var(--white);
+}
+.ar .home-cta h2 { font-family: var(--font-ar); }
+.home-cta p {
+  color: var(--gray);
+  margin-bottom: 1.75rem;
+  font-size: .9rem;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.65;
+}
