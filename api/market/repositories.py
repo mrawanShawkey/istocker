@@ -99,7 +99,7 @@ def get_predicted_return(ticker):
 
 def get_all_predicted_returns(latest_date):
     stmt = (
-        db.select(Stock.ticker_symbol, Prediction.predicted_return)
+        db.select(Stock.ticker_symbol, Stock.risk_level, Prediction.predicted_return)
         .outerjoin(
             Prediction,
             and_(
@@ -109,7 +109,7 @@ def get_all_predicted_returns(latest_date):
         )
     )
     rows = db.session.execute(stmt).all()
-    return {row.ticker_symbol: row.predicted_return for row in rows}
+    return {row.ticker_symbol: {'predicted_return': row.predicted_return, 'risk_level': row.risk_level} for row in rows}
     
 def get_month_prices(ticker): #list of dicts
     stmt = (
