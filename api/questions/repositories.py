@@ -124,6 +124,8 @@ def calculate_and_store_risk_score(uuid, q_type, responses):
         if row:
             row.risk_tolerance_score = risk_tolerance
             db.session.commit()
+        else:
+            raise Errors.RecordNotFound
         return risk_tolerance
     
 def get_risk_capacity(uuid):
@@ -193,6 +195,15 @@ def calculate_risk_capacity(user_id):
     if not weights:
         return 0
     risk_capacity = round((sum(weights)/4) * 100)
+    stmt = (
+        db.select(UserProfile)
+        .where(UserProfile.user_id==user_id)
+    )
+    row = db.session.execute(stmt).scalars().first()
+    if not row:
+        raise Errors.UserNotFound
+    row.risk_capacity_score = risk_capacity
+    db.session.commit()
     return risk_capacity
 
 def edit_responses(uuid, modifications):
