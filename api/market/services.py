@@ -11,7 +11,7 @@ def get_market_data():
             'ticker': ticker,
             'currentPrice': price,
             'percentDifference': all_stocks_percent_differences.get(ticker, 0.0),
-            'predictedReturn': all_stocks_predicted_returns.get(ticker, {}).get('predicted_return', 0.0)
+            'predictedReturn': all_stocks_predicted_returns.get(ticker, 0.0)
         }
         for ticker, price in all_stocks_current_prices.items()
     ]
