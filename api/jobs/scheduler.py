@@ -23,6 +23,7 @@ from preprocessing.market_processing.data_cleaning import MarketDataCleaner
 from api.app import create_app, db
 from api.models import StockPrice, Prediction, RecommendationSet, Recommendation
 from api.market.repositories import *
+from api.common.utils.utils import get_market_update_html
 from api.config import Config
 from tvDatafeed import TvDatafeed, Interval
 
@@ -219,14 +220,14 @@ def daily_email():
         return
 
     subject = 'Daily Market Update.'
-    body = 'Today\'s market data is now available. Check out the latest updates on your dashboard!'
+    body = get_market_update_html()
     for email in emails:
         try:
             msg = MIMEMultipart()
-            msg['From'] = Config.EMAIL_ADDRESS
+            msg['From'] = f'<{Config.EMAIL_ADDRESS}>'
             msg['To'] = email
             msg['Subject'] = subject
-            msg.attach(MIMEText(body, 'plain'))
+            msg.attach(MIMEText(body, 'html'))
 
             server.sendmail(Config.EMAIL_ADDRESS, email, msg.as_string())
 

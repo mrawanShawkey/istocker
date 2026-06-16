@@ -71,7 +71,7 @@ def change_password(uuid, new_password):
         .where(User.uuid==uuid)
     )
     user = db.session.execute(stmt).scalar()
-    user.password_hash = bcrypt.generate_password_hash(new_password)
+    user.password_hash = bcrypt.generate_password_hash(new_password, 10).decode('utf-8')
     db.session.commit()
     
 def invalidate_token(uuid, token_payloads):

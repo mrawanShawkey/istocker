@@ -64,3 +64,6 @@ UserNotFound = AppErrors(404, 'USER_NOT_FOUND', 'User does not exist.')
 #DATABASE ERRORS
 RecordNotFound = AppErrors(400, 'RECORD_NOT_FOUND', 'Target record does not exist.')
 DatabaseError = AppErrors(500, 'DATABASE_ERROR', 'An unexpected database error occurred while updating responses.')
+
+#CONNECTION ERRORS
+LostConnection = AppErrors(500, 'LOST_CONNECTION', 'Could not connect to the requested resource. Please try again later.')

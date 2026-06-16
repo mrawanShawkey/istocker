@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity, decode_t
 import api.auth.services as Services
 from api.common.utils.utils import *
 import api.common.errors.errors as Errors
+
 auth = Blueprint('auth', __name__)
 
 @auth.route('/register', methods=['POST'])

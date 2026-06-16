@@ -57,20 +57,21 @@ def forgot_password(email):
         raise Errors.UserNotFound
     reset_token = create_access_token(email)
     subject = 'iStocker password reset.'
-    body = f'Enter this code to reset your password (expires in 15 mins): {reset_token}.'
+    body = get_reset_pass_html(reset_token)
     try:
         msg = MIMEMultipart()
-        msg['From'] = Config.EMAIL_ADDRESS
+        msg['From'] = f'<{Config.EMAIL_ADDRESS}>'
         msg['To'] = email
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(body, 'html'))
         server = smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT)
         server.starttls()
         server.login(Config.EMAIL_ADDRESS, Config.EMAIL_PASSWORD)
         server.sendmail(Config.EMAIL_ADDRESS, email, msg.as_string())
         server.quit()
-    except:
-        raise Errors.DatabaseError
+    except Exception as e:
+        print(e)
+        raise Errors.LostConnection
 
 def reset_password(code, email, new_password, re_password):
     decoded_code = decode_token(code)

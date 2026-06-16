@@ -59,16 +59,18 @@ def get_questions_and_options(q_type):
 # POST /questions/responses/?type=x
 def submit_responses(uuid, q_type, responses):
     user_id = get_user_id_with_uuid(uuid)
-    if q_type == 'Questionnaire':
-        assessment = RiskAssessment(
-            user_id = user_id
-        )
-        db.session.add(assessment)
-        db.session.flush()
-        assessment_id = assessment.assessment_id
-    else:
-        assessment_id = None
     try:
+        if not user_id:
+            raise Errors.UserNotFound
+        if q_type == 'Questionnaire':
+            assessment = RiskAssessment(
+                user_id = user_id
+            )
+            db.session.add(assessment)
+            db.session.flush()
+            assessment_id = assessment.assessment_id
+        else:
+            assessment_id = None
         for item in responses:
             q_id = item.get('questionId')
             o_id = item.get('optionId')
