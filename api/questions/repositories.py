@@ -149,6 +149,8 @@ def get_risk_tolerance(user_id):
 
 def calculate_and_store_total_risk(uuid, risk_capacity, risk_tolerance):
     user_id = get_user_id_with_uuid(uuid)
+    if risk_capacity is None or risk_tolerance is None:
+        raise Errors.ValidationFailed
     total_risk = round((0.3 * risk_tolerance + 0.7 * risk_capacity))
     stmt = (
             db.select(RiskAssessment)
