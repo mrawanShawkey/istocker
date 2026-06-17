@@ -1,0 +1,8 @@
+{
+  "avg_ic": 0.181379218369196,
+  "avg_spearman_ic": 0.15417706317286203,
+  "icir": 1.3460393767015968,
+  "spearman_icir": 1.1752018045797,
+  "negative_ic_folds": 2,
+  "negative_spearman_folds": 1
+}

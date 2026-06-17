@@ -1,0 +1,4 @@
+version,avg_ic,avg_spearman,stability_metric,negative_folds
+V1,0.181379,0.154177,1.175202,1
+V2,0.195689,0.164362,1.061773,3
+V3,0.17859,0.143696,0.856451,3
