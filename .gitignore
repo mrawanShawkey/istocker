@@ -60,4 +60,5 @@ tempCodeRunnerFile.py
 *.bak
 
 
-.codex
+.codex/
+.agents/
