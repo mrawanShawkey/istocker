@@ -1,0 +1,13 @@
+{
+  "avg_ic": 0.19568854790938137,
+  "std_ic": 0.15310580526425463,
+  "icir": 1.2781262446034007,
+  "avg_spearman_ic": 0.16436170770544326,
+  "std_spearman_ic": 0.15479922092260162,
+  "spearman_icir": 1.0617734813253537,
+  "negative_ic_folds": 2,
+  "negative_spearman_folds": 3,
+  "robust_score": 0.11566190247479285,
+  "std_penalty": 0.25,
+  "negative_penalty": 0.05
+}

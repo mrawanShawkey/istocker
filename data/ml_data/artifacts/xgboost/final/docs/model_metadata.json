@@ -1,0 +1,86 @@
+{
+  "model_name": "xgboost_v1_final",
+  "model_type": "XGBRegressor",
+  "selected_tuning_version": "V1",
+  "target": "target_252d",
+  "feature_selection": {
+    "source_file": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/features/stability/feature_stability.csv",
+    "rule": "frequency > 0.6",
+    "n_features": 15,
+    "features_file": "feature_columns.json",
+    "medians_file": "feature_medians.json"
+  },
+  "training_data": {
+    "source_file": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/datasets/modeling/EGX30_modeling_dataset.csv",
+    "n_training_rows": 106888,
+    "n_symbols": 30,
+    "training_start_date": "2003-06-16",
+    "training_end_date": "2025-05-28",
+    "date_ordering": "date, symbol"
+  },
+  "training_strategy": {
+    "internal_validation_fraction": 0.15,
+    "early_stopping_rounds_for_iteration_selection": 30,
+    "final_model_training": "Retrained on all available rows after selecting n_estimators"
+  },
+  "final_params": {
+    "n_estimators": 33,
+    "max_depth": 5,
+    "learning_rate": 0.03362895774231974,
+    "subsample": 0.7383038258652408,
+    "colsample_bytree": 0.5773203111238806,
+    "min_child_weight": 15,
+    "gamma": 0.87742101992794,
+    "reg_alpha": 0.1799281490630024,
+    "reg_lambda": 8.502851087916396,
+    "objective": "reg:squarederror",
+    "eval_metric": "rmse",
+    "tree_method": "hist",
+    "random_state": 42,
+    "n_jobs": -1
+  },
+  "validation_results": {
+    "source_file": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/results/walkforward/tuning/v1/docs/xgboost_tuned_summary.json",
+    "avg_ic": 0.181379218369196,
+    "avg_spearman_ic": 0.15417706317286203,
+    "icir": 1.3460393767015968,
+    "spearman_icir": 1.1752018045797,
+    "negative_ic_folds": 2,
+    "negative_spearman_folds": 1
+  },
+  "backtest_results": {
+    "source_file": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/results/walkforward/backtest/xgboost/docs/xgboost_backtest_summary.json",
+    "rebalance_mode": "FOLD_START",
+    "n_rebalances": 15,
+    "avg_top_return": 0.23864467442035675,
+    "avg_bottom_return": -0.014310020953416824,
+    "avg_benchmark_return": 0.0921301394701004,
+    "avg_active_return": 0.14651450514793396,
+    "avg_long_short_spread": 0.2529546916484833,
+    "avg_top_return_after_cost": 0.23788021504878998,
+    "avg_active_after_cost": 0.14575006067752838,
+    "avg_long_short_after_cost": 0.2513868808746338,
+    "top_beats_benchmark_rate": 0.7333333333333333,
+    "top_beats_bottom_rate": 0.7333333333333333,
+    "positive_long_short_rate": 0.7333333333333333,
+    "avg_top_turnover": 0.7644444444444446,
+    "avg_bottom_turnover": 0.8033333333333333,
+    "active_return_sharpe_like": 0.7131990790367126,
+    "long_short_sharpe_like": 0.8770014047622681,
+    "active_after_cost_sharpe_like": 0.7093116641044617,
+    "long_short_after_cost_sharpe_like": 0.8714462518692017
+  },
+  "artifact_files": {
+    "model_json": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/artifacts/xgboost/final/model/xgboost_model.json",
+    "model_pickle": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/artifacts/xgboost/final/model/xgboost_model.pkl",
+    "metadata": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/artifacts/xgboost/final/docs/model_metadata.json",
+    "feature_columns": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/artifacts/xgboost/final/docs/feature_columns.json",
+    "feature_medians": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/artifacts/xgboost/final/docs/feature_medians.json",
+    "final_params": "/media/mrawan-shawkey/dev/gradute/Istocker/data/ml_data/artifacts/xgboost/final/docs/xgboost_final_params.json"
+  },
+  "library_versions": {
+    "xgboost": "3.2.0",
+    "pandas": "2.3.3",
+    "numpy": "2.2.5"
+  }
+}

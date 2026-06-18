@@ -58,3 +58,7 @@ Thumbs.db
 tempCodeRunnerFile.py
 *.tmp
 *.bak
+
+
+.codex/
+.agents/

@@ -19,7 +19,7 @@ from ml.feature_selection.feature_cache import load_features
 
 from config.paths import (
     MODELING_DATASET_FILE,
-    WALKFORWARD_RESULTS_DIR,
+    WALKFORWARD_BASELINE_DIR,
     XGB_MODEL_PATH,
     FEATURE_STABILITY_FILE
 )
@@ -164,7 +164,7 @@ def main():
     folds           = list(folds)
 
     # Load original results for identity check
-    results_path = WALKFORWARD_RESULTS_DIR / "xgboost_results.csv"
+    results_path = WALKFORWARD_BASELINE_DIR / "xgboost_results.csv"
     original_df  = pd.read_csv(results_path)
     original_df["preds"] = original_df["preds"].apply(to_array)
 
@@ -266,7 +266,7 @@ def main():
     print(f"  Identity fails  : {(~report_df['identity_ok']).sum()}")
 
     # Save report
-    out = WALKFORWARD_RESULTS_DIR / "serialization_verification_report.csv"
+    out = WALKFORWARD_BASELINE_DIR / "serialization_verification_report.csv"
     report_df.to_csv(out, index=False)
     print(f"\n  Report saved to: {out}")
 

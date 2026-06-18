@@ -1,9 +1,10 @@
 from xgboost import XGBRegressor
 import numpy as np
 
+
 class XGBoostModel:
 
-    def __init__(self,params=None):
+    def __init__(self, params=None, validation_fraction=0.15):
 
         default_params = {
             "n_estimators": 500,
@@ -16,7 +17,10 @@ class XGBoostModel:
             "min_child_weight": 5,
             "random_state": 42,
             "eval_metric": "rmse",
-            "early_stopping_rounds": 30
+            "early_stopping_rounds": 30,
+            "objective": "reg:squarederror",
+            "tree_method": "hist",
+            "n_jobs": -1,
         }
 
         if params:
@@ -24,27 +28,44 @@ class XGBoostModel:
 
         self.model = XGBRegressor(**default_params)
         self.is_fitted = False
-    
+        self.validation_fraction = validation_fraction
+
     def fit(self, X, y):
         if hasattr(X, "columns") and "symbol" in X.columns:
             X = X.drop(columns=["symbol"])
 
-        # Time-ordered validation split — last 15% of training rows
+        X = np.asarray(X)
+        y = np.asarray(y)
+
         n = len(X)
-        split = int(n * 0.85)
+
+        if n < 50:
+            self.model.fit(X, y, verbose=False)
+            self.is_fitted = True
+            return self
+
+        split = int(n * (1 - self.validation_fraction))
+
         X_tr, X_val = X[:split], X[split:]
         y_tr, y_val = y[:split], y[split:]
 
         self.model.fit(
-            X_tr, y_tr,
+            X_tr,
+            y_tr,
             eval_set=[(X_val, y_val)],
-            verbose=False
+            verbose=False,
         )
+
         self.is_fitted = True
+        return self
 
     def predict(self, X):
         if not self.is_fitted:
             raise ValueError("Model was not fitted before predict()")
+
         if hasattr(X, "columns") and "symbol" in X.columns:
             X = X.drop(columns=["symbol"])
+
+        X = np.asarray(X)
+
         return self.model.predict(X)
