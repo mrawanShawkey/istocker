@@ -1,0 +1,94 @@
+// Integration Tests: Result Page
+// Verifies risk score calculation is correct after quiz submission
+
+const testUser = {
+  firstName: 'Result',
+  lastName:  'Tester',
+  email:     'resulttester_cypress@example.com',
+  password:  'Password123!',
+}
+
+describe('Result Page', () => {
+  before(() => {
+    cy.loginViaAPI(testUser)
+
+    // Submit registration questions
+    cy.window().then(win => {
+      const token = win.localStorage.getItem('ist_access_token')
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:5000/questions/responses?type=Registration',
+        headers: { Authorization: `Bearer ${token}` },
+        body: {
+          responses: [
+            { questionId: 1, optionId: 2 },
+            { questionId: 2, optionId: 5 },
+            { questionId: 3, optionId: 8 },
+            { questionId: 4, optionId: 11 },
+          ],
+        },
+        failOnStatusCode: false,
+      })
+    })
+
+    // Submit questionnaire and verify scores
+    cy.window().then(win => {
+      const token = win.localStorage.getItem('ist_access_token')
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:5000/questions/responses?type=Questionnaire',
+        headers: { Authorization: `Bearer ${token}` },
+        body: {
+          responses: [
+            { questionId: 5,  optionId: 1 },
+            { questionId: 6,  optionId: 3 },
+            { questionId: 7,  optionId: 2 },
+            { questionId: 8,  optionId: 4 },
+            { questionId: 9,  optionId: 1 },
+            { questionId: 10, optionId: 2 },
+            { questionId: 11, optionId: 2 },
+            { questionId: 12, optionId: 1 },
+            { questionId: 13, optionId: 4 },
+            { questionId: 14, optionId: 2 },
+            { questionId: 15, optionId: 3 },
+            { questionId: 16, optionId: 1 },
+            { questionId: 17, optionId: 2 },
+            { questionId: 18, optionId: 4 },
+            { questionId: 19, optionId: 1 },
+            { questionId: 20, optionId: 3 },
+            { questionId: 21, optionId: 2 },
+          ],
+        },
+      }).then(res => {
+        // Verify backend calculated scores correctly
+        expect(res.status).to.eq(200)
+        expect(res.body.data.riskCapacityScore).to.eq(44)
+        expect(res.body.data.riskToleranceScore).to.eq(36)
+        expect(res.body.data.totalRiskScore).to.eq(42)
+        expect(res.body.data.riskCategory).to.eq('Moderate')
+      })
+    })
+
+    cy.visit('/result')
+  })
+
+  it('displays risk category returned from backend', () => {
+    cy.contains(/Moderate/i).should('exist')
+  })
+
+  it('displays total risk score (42)', () => {
+    cy.contains('42').should('exist')
+  })
+
+  it('displays risk capacity score (44)', () => {
+    cy.contains('44').should('exist')
+  })
+
+  it('displays risk tolerance score (36)', () => {
+    cy.contains('36').should('exist')
+  })
+
+  it('has a button to continue', () => {
+    cy.get('button, a').contains(/recommendation|home|market|continue/i).should('exist')
+  })
+})

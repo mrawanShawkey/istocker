@@ -1,0 +1,12 @@
+{
+  "name": "istocker-integration-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test:open": "cypress open",
+    "test": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0"
+  }
+}
