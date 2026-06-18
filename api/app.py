@@ -22,7 +22,7 @@ def create_app():
     jwt.init_app(app)
 
     # Enable CORS for all origins (convenient for testing). Restrict in prod.
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(market, url_prefix='/market')
