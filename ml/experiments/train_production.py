@@ -1,132 +1,199 @@
 """
 train_xgboost_final.py
 
-Final training + serialization for selected XGBoost V1 model.
+Final training + serialization for the selected XGBoost V1 model.
 
 Usage:
-    python -m ml.experiments.train_xgboost_final
+    python -m ml.experiments.train_production
 """
 
 import json
 import warnings
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import xgboost as xgb
 from xgboost import XGBRegressor
+import joblib
 
 from config.paths import (
     MODELING_DATASET_FILE,
-    WALKFORWARD_BASELINE_DIR,
     FEATURE_STABILITY_FILE,
+    XGBOOST_BEST_PARAMS_FILE,
+    XGBOOST_TUNED_SUMMARY_FILE,
+    XGBOOST_BACKTEST_SUMMARY_FILE,
+    XGBOOST_FINAL_MODEL_DIR,
+    XGBOOST_FINAL_DOCS_DIR,
+    XGBOOST_FINAL_FIGURES_DIR,
+    XGB_MODEL,
+    XGB_MODEL_PKL,
+    XGB_MODEL_META,
+    XGB_FEATURE_COLUMNS,
+    XGB_FEATURE_MEDIANS,
+    XGB_FINAL_PARAMS,
 )
 
 warnings.filterwarnings("ignore")
 
 
-ARTIFACT_DIR = WALKFORWARD_BASELINE_DIR / "xgboost_final_artifacts"
-ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+# =====================================================
+# Final Training Settings
+# =====================================================
+TARGET_COL = "target_252d"
 
-
-# Selected final model: V1
-BEST_PARAMS = {
-    "n_estimators": 308,
-    "max_depth": 5,
-    "learning_rate": 0.03362895774231974,
-    "subsample": 0.7383038258652408,
-    "colsample_bytree": 0.5773203111238806,
-    "min_child_weight": 15,
-    "gamma": 0.87742101992794,
-    "reg_alpha": 0.1799281490630024,
-    "reg_lambda": 8.502851087916396,
-    "objective": "reg:squarederror",
-    "eval_metric": "rmse",
-    "tree_method": "hist",
-    "random_state": 42,
-    "n_jobs": -1,
-}
-
-EARLY_STOPPING_ROUNDS = 30
-VALIDATION_FRACTION = 0.15
+SELECTED_TUNING_VERSION = "V1"
 STABILITY_THRESHOLD = 0.6
+VALIDATION_FRACTION = 0.15
+EARLY_STOPPING_ROUNDS = 30
 
 
+# =====================================================
+# Helpers
+# =====================================================
+def ensure_output_dirs():
+    XGBOOST_FINAL_MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    XGBOOST_FINAL_DOCS_DIR.mkdir(parents=True, exist_ok=True)
+    XGBOOST_FINAL_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def load_json(path):
+    if not path.exists():
+        raise FileNotFoundError(f"Missing file: {path}")
+
+    with open(path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def save_json(obj, path):
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(obj, file, indent=2)
+
+
+# =====================================================
+# Load Dataset
+# =====================================================
 def load_data():
+    if not MODELING_DATASET_FILE.exists():
+        raise FileNotFoundError(f"Missing modeling dataset: {MODELING_DATASET_FILE}")
+
     df = pd.read_csv(MODELING_DATASET_FILE)
+
+    if "date" not in df.columns:
+        raise ValueError("Modeling dataset must contain a 'date' column.")
+
+    if "symbol" not in df.columns:
+        raise ValueError("Modeling dataset must contain a 'symbol' column.")
+
+    if TARGET_COL not in df.columns:
+        raise ValueError(f"Modeling dataset must contain target column: {TARGET_COL}")
 
     df["date"] = pd.to_datetime(df["date"])
 
-    # Important: keep time ordering
+    # Critical for time-series training and internal validation split
     df = df.sort_values(["date", "symbol"]).reset_index(drop=True)
 
-    target_col = "target_252d"
-
     feature_cols = [
-        c for c in df.columns
-        if c not in ["date", "symbol", target_col]
-        and df[c].dtype != object
+        col for col in df.columns
+        if col not in ["date", "symbol", TARGET_COL]
+        and pd.api.types.is_numeric_dtype(df[col])
     ]
 
-    return df, feature_cols, target_col
+    if not feature_cols:
+        raise ValueError("No numeric feature columns found.")
+
+    return df, feature_cols
 
 
+# =====================================================
+# Final Feature Selection
+# =====================================================
 def load_final_features(feature_cols):
+    if not FEATURE_STABILITY_FILE.exists():
+        raise FileNotFoundError(f"Missing feature stability file: {FEATURE_STABILITY_FILE}")
+
     stability_df = pd.read_csv(FEATURE_STABILITY_FILE)
 
-    if "feature" not in stability_df.columns or "frequency" not in stability_df.columns:
-        raise ValueError("FEATURE_STABILITY_FILE must contain columns: feature, frequency")
+    required_cols = {"feature", "frequency"}
+    missing_cols = required_cols - set(stability_df.columns)
 
-    final_features = stability_df[
-        stability_df["frequency"] > STABILITY_THRESHOLD
-    ]["feature"].tolist()
+    if missing_cols:
+        raise ValueError(
+            f"Feature stability file is missing columns: {missing_cols}"
+        )
 
-    final_features = [f for f in final_features if f in feature_cols]
+    final_features = stability_df.loc[
+        stability_df["frequency"] > STABILITY_THRESHOLD,
+        "feature",
+    ].tolist()
+
+    final_features = [
+        feature for feature in final_features
+        if feature in feature_cols
+    ]
+
     final_features = sorted(final_features)
 
-    if len(final_features) == 0:
-        raise ValueError("No final features found. Check feature stability file.")
+    if not final_features:
+        raise ValueError(
+            "No final features found. Check feature stability threshold "
+            f"or feature_stability.csv. Threshold = {STABILITY_THRESHOLD}"
+        )
 
     return final_features
 
 
-def prepare_final_training_data(df, final_features, target_col):
+# =====================================================
+# Prepare Training Data
+# =====================================================
+def prepare_training_data(df, final_features):
     X = df[final_features].copy()
-    y = df[target_col].copy()
+    y = df[TARGET_COL].copy()
 
     X = X.replace([np.inf, -np.inf], np.nan)
     y = y.replace([np.inf, -np.inf], np.nan)
 
-    valid_target = y.notna()
+    valid_mask = y.notna()
 
-    X = X.loc[valid_target]
-    y = y.loc[valid_target]
+    X = X.loc[valid_mask].reset_index(drop=True)
+    y = y.loc[valid_mask].reset_index(drop=True)
 
-    dates = df.loc[valid_target, "date"].copy()
+    dates = df.loc[valid_mask, "date"].reset_index(drop=True)
+    symbols = df.loc[valid_mask, "symbol"].reset_index(drop=True)
 
-    # Medians calculated from final training data
+    # Medians are part of production preprocessing
     medians = X.median()
     X = X.fillna(medians)
 
     X_np = X.values.astype(np.float32)
     y_np = y.values.astype(np.float32)
 
-    return X_np, y_np, dates, medians
+    return X_np, y_np, dates, symbols, medians
 
 
-def find_best_iteration(X, y):
+# =====================================================
+# Estimate Best Number of Trees
+# =====================================================
+def find_best_n_estimators(X, y, best_params):
     """
-    Use the last 15% of the time-ordered training data as validation
+    Uses the last 15% of the time-ordered training data as validation
     to estimate the best number of boosting rounds.
+
+    The final model is later retrained on all data using this number.
     """
 
-    n = len(X)
-    split = int(n * (1 - VALIDATION_FRACTION))
+    n_rows = len(X)
 
-    X_train, X_val = X[:split], X[split:]
-    y_train, y_val = y[:split], y[split:]
+    if n_rows < 100:
+        print("Dataset too small for internal validation. Using original n_estimators.")
+        return int(best_params["n_estimators"])
+
+    split_idx = int(n_rows * (1 - VALIDATION_FRACTION))
+
+    X_train, X_val = X[:split_idx], X[split_idx:]
+    y_train, y_val = y[:split_idx], y[split_idx:]
 
     temp_params = {
-        **BEST_PARAMS,
+        **best_params,
         "early_stopping_rounds": EARLY_STOPPING_ROUNDS,
     }
 
@@ -142,27 +209,21 @@ def find_best_iteration(X, y):
     best_iteration = getattr(model, "best_iteration", None)
 
     if best_iteration is None:
-        best_n_estimators = BEST_PARAMS["n_estimators"]
-    else:
-        best_n_estimators = int(best_iteration) + 1
+        return int(best_params["n_estimators"])
 
-    return best_n_estimators
+    return int(best_iteration) + 1
 
 
-def train_final_model_on_all_data(X, y, best_n_estimators):
-    """
-    Final model is retrained on all available data using the selected
-    number of estimators.
-
-    This avoids losing the last 15% of data in the final production model.
-    """
-
+# =====================================================
+# Final Model Training
+# =====================================================
+def train_final_model(X, y, best_params, best_n_estimators):
     final_params = {
-        **BEST_PARAMS,
-        "n_estimators": best_n_estimators,
+        **best_params,
+        "n_estimators": int(best_n_estimators),
     }
 
-    # No early stopping in the final full-data training
+    # Final full-data model should not use early stopping
     final_params.pop("early_stopping_rounds", None)
 
     model = XGBRegressor(**final_params)
@@ -171,134 +232,176 @@ def train_final_model_on_all_data(X, y, best_n_estimators):
     return model, final_params
 
 
+# =====================================================
+# Save Artifacts
+# =====================================================
 def save_artifacts(
     model,
     final_features,
     medians,
     final_params,
-    df,
     dates,
-    target_col,
+    symbols,
+    validation_summary,
+    backtest_summary,
 ):
-    model_path = ARTIFACT_DIR / "xgboost_model.json"
-    features_path = ARTIFACT_DIR / "feature_columns.json"
-    medians_path = ARTIFACT_DIR / "feature_medians.json"
-    params_path = ARTIFACT_DIR / "xgboost_final_params.json"
-    metadata_path = ARTIFACT_DIR / "model_metadata.json"
+    # 1. Save model
+    model.save_model(str(XGB_MODEL))
 
-    model.save_model(model_path)
+    # 2. Save model in joblib/pickle format for Python app usage
+    joblib.dump(model, XGB_MODEL_PKL)
 
-    with open(features_path, "w", encoding="utf-8") as f:
-        json.dump(final_features, f, indent=2)
+    # 3. Save feature columns
+    save_json(final_features, XGB_FEATURE_COLUMNS)
 
-    medians.to_json(medians_path, indent=2)
+    # 4. Save medians
+    medians.to_json(XGB_FEATURE_MEDIANS, indent=2)
 
-    with open(params_path, "w", encoding="utf-8") as f:
-        json.dump(final_params, f, indent=2)
+    # 5. Save final params
+    save_json(final_params, XGB_FINAL_PARAMS)
 
+    # 6. Save metadata
     metadata = {
         "model_name": "xgboost_v1_final",
         "model_type": "XGBRegressor",
-        "target": target_col,
-        "selected_tuning_version": "V1",
-        "feature_selection_rule": f"FEATURE_STABILITY_FILE frequency > {STABILITY_THRESHOLD}",
-        "n_features": int(len(final_features)),
-        "n_training_rows": int(len(dates)),
-        "training_start_date": str(pd.to_datetime(dates).min().date()),
-        "training_end_date": str(pd.to_datetime(dates).max().date()),
-        "initial_best_params": BEST_PARAMS,
-        "final_training_params": final_params,
+        "selected_tuning_version": SELECTED_TUNING_VERSION,
+        "target": TARGET_COL,
+
+        "feature_selection": {
+            "source_file": str(FEATURE_STABILITY_FILE),
+            "rule": f"frequency > {STABILITY_THRESHOLD}",
+            "n_features": int(len(final_features)),
+            "features_file": XGB_FEATURE_COLUMNS.name,
+            "medians_file": XGB_FEATURE_MEDIANS.name,
+        },
+
+        "training_data": {
+            "source_file": str(MODELING_DATASET_FILE),
+            "n_training_rows": int(len(dates)),
+            "n_symbols": int(symbols.nunique()),
+            "training_start_date": str(pd.to_datetime(dates).min().date()),
+            "training_end_date": str(pd.to_datetime(dates).max().date()),
+            "date_ordering": "date, symbol",
+        },
+
+        "training_strategy": {
+            "internal_validation_fraction": VALIDATION_FRACTION,
+            "early_stopping_rounds_for_iteration_selection": EARLY_STOPPING_ROUNDS,
+            "final_model_training": "Retrained on all available rows after selecting n_estimators",
+        },
+
+        "final_params": final_params,
+
         "validation_results": {
-            "v1_avg_ic": 0.181379,
-            "v1_avg_spearman_ic": 0.154177,
-            "v1_spearman_icir": 1.175202,
-            "v1_negative_spearman_folds": "1/15",
+            "source_file": str(XGBOOST_TUNED_SUMMARY_FILE),
+            **validation_summary,
         },
+
         "backtest_results": {
-            "rebalance_mode": "FOLD_START",
-            "n_rebalances": 15,
-            "avg_top_return": 0.238645,
-            "avg_bottom_return": -0.014310,
-            "avg_benchmark_return": 0.092130,
-            "avg_active_return": 0.146515,
-            "avg_long_short_spread": 0.252955,
-            "avg_top_return_after_cost": 0.237880,
-            "avg_active_after_cost": 0.145750,
-            "avg_long_short_after_cost": 0.251387,
-            "top_beats_benchmark_rate": 0.733333,
-            "top_beats_bottom_rate": 0.733333,
-            "positive_long_short_rate": 0.733333,
-            "active_after_cost_sharpe_like": 0.709312,
-            "long_short_after_cost_sharpe_like": 0.871446,
+            "source_file": str(XGBOOST_BACKTEST_SUMMARY_FILE),
+            **backtest_summary,
         },
-        "artifact_files": {
-            "model": model_path.name,
-            "features": features_path.name,
-            "medians": medians_path.name,
-            "params": params_path.name,
-            "metadata": metadata_path.name,
+
+    "artifact_files": {
+        "model_json": str(XGB_MODEL),
+        "model_pickle": str(XGB_MODEL_PKL),
+        "metadata": str(XGB_MODEL_META),
+        "feature_columns": str(XGB_FEATURE_COLUMNS),
+        "feature_medians": str(XGB_FEATURE_MEDIANS),
+        "final_params": str(XGB_FINAL_PARAMS),
+    },
+
+        "library_versions": {
+            "xgboost": xgb.__version__,
+            "pandas": pd.__version__,
+            "numpy": np.__version__,
         },
     }
 
-    with open(metadata_path, "w", encoding="utf-8") as f:
-        json.dump(metadata, f, indent=2)
+    save_json(metadata, XGB_MODEL_META)
 
     return {
-        "model": model_path,
-        "features": features_path,
-        "medians": medians_path,
-        "params": params_path,
-        "metadata": metadata_path,
+        "model_json": XGB_MODEL,
+        "model_pickle": XGB_MODEL_PKL,
+        "metadata": XGB_MODEL_META,
+        "feature_columns": XGB_FEATURE_COLUMNS,
+        "feature_medians": XGB_FEATURE_MEDIANS,
+        "final_params": XGB_FINAL_PARAMS,
     }
 
 
+# =====================================================
+# Main
+# =====================================================
 def main():
-    print("Loading data...")
-    df, feature_cols, target_col = load_data()
+    ensure_output_dirs()
 
-    print(f"Dataset rows: {len(df)}")
+    print("Loading final selected XGBoost V1 parameters...")
+    best_params = load_json(XGBOOST_BEST_PARAMS_FILE)
+
+    print("Loading validation summary...")
+    validation_summary = load_json(XGBOOST_TUNED_SUMMARY_FILE)
+
+    print("Loading backtest summary...")
+    backtest_summary = load_json(XGBOOST_BACKTEST_SUMMARY_FILE)
+
+    print("\nLoading modeling dataset...")
+    df, feature_cols = load_data()
+
+    print(f"Dataset rows: {len(df):,}")
     print(f"Numeric features before final selection: {len(feature_cols)}")
 
+    print("\nLoading final stable feature set...")
     final_features = load_final_features(feature_cols)
 
     print(f"Final selected features: {len(final_features)}")
-    for f in final_features:
-        print(f"  - {f}")
+    for feature in final_features:
+        print(f"  - {feature}")
 
-    X, y, dates, medians = prepare_final_training_data(
+    print("\nPreparing final training matrix...")
+    X, y, dates, symbols, medians = prepare_training_data(
         df=df,
         final_features=final_features,
-        target_col=target_col,
     )
 
-    print("\nFinding best iteration using internal validation...")
-    best_n_estimators = find_best_iteration(X, y)
+    print(f"Training rows after target filtering: {len(y):,}")
+    print(f"Training date range: {dates.min().date()} -> {dates.max().date()}")
 
-    print(f"Original n_estimators: {BEST_PARAMS['n_estimators']}")
-    print(f"Selected final n_estimators: {best_n_estimators}")
-
-    print("\nTraining final model on all available data...")
-    final_model, final_params = train_final_model_on_all_data(
+    print("\nSelecting final n_estimators using internal validation...")
+    best_n_estimators = find_best_n_estimators(
         X=X,
         y=y,
+        best_params=best_params,
+    )
+
+    print(f"Original n_estimators from V1: {best_params['n_estimators']}")
+    print(f"Final selected n_estimators: {best_n_estimators}")
+
+    print("\nTraining final XGBoost model on all available data...")
+    final_model, final_params = train_final_model(
+        X=X,
+        y=y,
+        best_params=best_params,
         best_n_estimators=best_n_estimators,
     )
 
-    print("\nSaving artifacts...")
-    paths = save_artifacts(
+    print("\nSaving production artifacts...")
+    artifact_paths = save_artifacts(
         model=final_model,
         final_features=final_features,
         medians=medians,
         final_params=final_params,
-        df=df,
         dates=dates,
-        target_col=target_col,
+        symbols=symbols,
+        validation_summary=validation_summary,
+        backtest_summary=backtest_summary,
     )
 
-    print("\n============================")
-    print("Final model serialization done")
-    print("============================")
-    for name, path in paths.items():
+    print("\n====================================")
+    print("Final XGBoost production model saved")
+    print("====================================")
+
+    for name, path in artifact_paths.items():
         print(f"{name}: {path}")
 
 

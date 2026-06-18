@@ -27,7 +27,7 @@ STOCKS = DATABASE_DIR / "stocks.csv"
 # -------------------------
 # Market Data Files
 # -------------------------
-DATASETS_DIR = MARKET_DIR / "datasets"
+DATASETS_DIR = ML_DIR / "datasets"
 MODELING_DATASET_DIR = DATASETS_DIR / "modeling"
 SPLITS_DIR = DATASETS_DIR / "splits"
 
@@ -51,7 +51,7 @@ FEATURE_CACHE_DIR = FEATURES_DIR / "cache"
 FEATURE_CACHE_FILE = FEATURE_CACHE_DIR / "feature_cache.csv"
 
 FEATURE_STABILITY_DIR = FEATURES_DIR / "stability"
-FEATURE_STABILITY_FILE = FEATURES_DIR / "feature_stability.csv"
+FEATURE_STABILITY_FILE = FEATURE_STABILITY_DIR / "feature_stability.csv"
 
 # -------------------------
 # Walk-forward Baseline
@@ -180,7 +180,7 @@ OLD_XGB_MODEL_META = PRODUCTION_OLD_DOCS_DIR / "xgboost_production_meta.json"
 ARTIFACTS_DIR = ML_DIR / "artifacts"
 
 XGBOOST_FINAL_ARTIFACT_DIR = ARTIFACTS_DIR / "xgboost" / "final"
-XGBOOST_FINAL_MODEL_DIR = XGBOOST_FINAL_ARTIFACT_DIR / "model"
+XGBOOST_FINAL_MODEL_DIR = BASE_DIR / "api" / "model"
 XGBOOST_FINAL_DOCS_DIR = XGBOOST_FINAL_ARTIFACT_DIR / "docs"
 XGBOOST_FINAL_FIGURES_DIR = XGBOOST_FINAL_ARTIFACT_DIR / "figures"
 
@@ -190,6 +190,8 @@ XGB_FEATURE_COLUMNS = XGBOOST_FINAL_DOCS_DIR / "feature_columns.json"
 XGB_FEATURE_MEDIANS = XGBOOST_FINAL_DOCS_DIR / "feature_medians.json"
 XGB_FINAL_PARAMS = XGBOOST_FINAL_DOCS_DIR / "xgboost_final_params.json"
 
+XGB_MODEL = XGBOOST_FINAL_MODEL_DIR / "xgboost_model.json"
+XGB_MODEL_PKL = XGBOOST_FINAL_MODEL_DIR / "xgboost_model.pkl"
 
 # -------------------------
 # Log File
