@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, JWTDecodeError
 
 from api.config import Config
 from api.common.extentions.extentions import db, bcrypt, jwt
+from flask_cors import CORS
 from api.auth.controllers import auth
 from api.market.controllers import market
 from api.user.controllers import user
@@ -20,6 +21,9 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    # Enable CORS for all origins (convenient for testing). Restrict in prod.
+    CORS(app)
+
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(market, url_prefix='/market')
     app.register_blueprint(user, url_prefix='/user')
@@ -32,8 +36,42 @@ def create_app():
 
     migrate = Migrate(app, db)
 
-    from api.seed import seed, clear
-    app.cli.command('seed')(seed)
-    app.cli.command('clear')(clear)
+    # Register seed/clear CLI commands if available. Importing seed may require
+    # heavy optional dependencies (pandas, etc.), so import lazily and tolerate
+    # failures in lightweight environments used for quick testing.
+    try:
+        from api.seed import seed, clear
+        app.cli.command('seed')(seed)
+        app.cli.command('clear')(clear)
+    except Exception:
+        pass
+
+    # Ensure CORS headers are present on all responses (safety net)
+    @app.after_request
+    def _add_cors_headers(response):
+        origin = request.headers.get('Origin')
+        if origin:
+            response.headers['Access-Control-Allow-Origin'] = origin
+        else:
+            response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+        response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+        return response
+
+    # Handle automatic OPTIONS responses from Werkzeug so they include CORS headers
+    @app.before_request
+    def _handle_options():
+        if request.method == 'OPTIONS':
+            resp = app.make_default_options_response()
+            origin = request.headers.get('Origin')
+            if origin:
+                resp.headers['Access-Control-Allow-Origin'] = origin
+            else:
+                resp.headers['Access-Control-Allow-Origin'] = '*'
+            resp.headers['Access-Control-Allow-Credentials'] = 'true'
+            resp.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+            resp.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+            return resp
 
     return app
