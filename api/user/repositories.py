@@ -39,8 +39,8 @@ def get_risk_category(user_id):
     row = db.session.scalars(stmt).first()
     if not row:
         return None, None, None, None, None
-    risk_category = row.category_name
-    risk_category_ar = row.category_name_ar
+    risk_category = row.category_name.value
+    risk_category_ar = row.category_name_ar.value
     description = row.description
     description_ar = row.description_ar
     min_score = str(row.min_score)
