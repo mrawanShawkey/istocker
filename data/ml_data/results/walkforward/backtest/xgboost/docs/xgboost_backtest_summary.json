@@ -1,0 +1,21 @@
+{
+  "rebalance_mode": "FOLD_START",
+  "n_rebalances": 15,
+  "avg_top_return": 0.23864467442035675,
+  "avg_bottom_return": -0.014310020953416824,
+  "avg_benchmark_return": 0.0921301394701004,
+  "avg_active_return": 0.14651450514793396,
+  "avg_long_short_spread": 0.2529546916484833,
+  "avg_top_return_after_cost": 0.23788021504878998,
+  "avg_active_after_cost": 0.14575006067752838,
+  "avg_long_short_after_cost": 0.2513868808746338,
+  "top_beats_benchmark_rate": 0.7333333333333333,
+  "top_beats_bottom_rate": 0.7333333333333333,
+  "positive_long_short_rate": 0.7333333333333333,
+  "avg_top_turnover": 0.7644444444444446,
+  "avg_bottom_turnover": 0.8033333333333333,
+  "active_return_sharpe_like": 0.7131990790367126,
+  "long_short_sharpe_like": 0.8770014047622681,
+  "active_after_cost_sharpe_like": 0.7093116641044617,
+  "long_short_after_cost_sharpe_like": 0.8714462518692017
+}

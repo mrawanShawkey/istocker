@@ -1,0 +1,17 @@
+[
+  "atr_14",
+  "exchange_rate",
+  "gdp",
+  "inflation_rate",
+  "interest_rate",
+  "ma_60_slope",
+  "mom60_x_vol20",
+  "mom_126",
+  "mom_252",
+  "month",
+  "price_to_ma252",
+  "realized_vol_20",
+  "unemployment_rate",
+  "vol_60",
+  "volume"
+]

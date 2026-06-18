@@ -1,0 +1,17 @@
+{
+  "atr_14":0.2078571429,
+  "exchange_rate":10.0254007885,
+  "gdp":10.4,
+  "inflation_rate":0.11,
+  "interest_rate":0.0925,
+  "ma_60_slope":0.0072546013,
+  "mom60_x_vol20":0.0003231346,
+  "mom_126":0.045837947,
+  "mom_252":0.088114532,
+  "month":7.0,
+  "price_to_ma252":1.039590892,
+  "realized_vol_20":0.0922792624,
+  "unemployment_rate":9.1,
+  "vol_60":0.0220194207,
+  "volume":975511.5
+}
