@@ -2,8 +2,12 @@ import { STORAGE_KEYS } from '../constants/storage'
 
 // Vite only exposes client-side env vars prefixed with VITE_.
 // This is only the backend base URL, not a secret.
-// The backend has no /api prefix, so local dev uses http://localhost:5000.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+// Use the build-time `VITE_API_BASE_URL` when present. Otherwise:
+// - in development: use local backend `http://localhost:5000`
+// - in production: fall back to the secure Render URL to avoid mixed-content.
+const DEFAULT_LOCAL = 'http://localhost:5000'
+const DEFAULT_PROD = 'https://istocker-3.onrender.com'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.MODE === 'development' ? DEFAULT_LOCAL : DEFAULT_PROD)
 
 export function getStoredAccessToken() {
   return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
