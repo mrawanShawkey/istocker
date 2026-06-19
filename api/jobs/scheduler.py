@@ -1,15 +1,3 @@
-"""Daily market-data scheduler.
-This module wires APScheduler to a daily pipeline that:
-1. downloads one day of EGX market data from TradingView,
-2. combines the raw CSV files into one daily CSV,
-3. syncs that data into the Flask/SQLAlchemy database,
-4. runs the production XGBoost model, and
-5. prepares recommendation data.
-The module creates a Flask app and TradingView client at import time. The
-scheduled job itself must run inside ``app.app_context()`` so Flask-SQLAlchemy
-can access configuration and the active database session.
-"""
-
 import sys
 from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -44,6 +32,7 @@ from api.config import Config
 from api.app import create_app, db
 from api.models import StockPrice, Prediction, RecommendationSet, Recommendation
 from api.market.repositories import *
+from api.common.utils.utils import get_market_update_html
 from tvDatafeed import TvDatafeed, Interval
 
 app = create_app()
@@ -55,27 +44,6 @@ combined_file_path = DAILY_DIR / "EGX30_Full_Dataset_Ready.csv"
 risk_categories = ['Conservative', 'Moderate', 'Aggressive']
 
 def daily_market_update():
-
-    """Fetch the latest daily market data and sync it into the database.
-    Inputs/parameters:
-        None. The function uses the module-level TradingView client, configured
-        market-data directory, and Flask-SQLAlchemy session.
-    Returns:
-        Path-like value returned by ``Extract.collect_and_combine``. This should
-        point to the combined daily CSV, or may be ``None`` if no files were
-        available to combine.
-    Side effects:
-        Calls TradingView through ``tvDatafeed``; creates and deletes CSV files
-        under ``data/market_data/daily``; inserts ``StockPrice`` rows; commits
-        or rolls back the database session; prints progress to stdout.
-    Possible errors:
-        Network/API errors from TradingView are mostly handled inside
-        ``Extract``. CSV read errors, missing columns, missing stock mappings,
-        SQLAlchemy errors, or file-system errors can occur. Database sync
-        errors are caught and rolled back here, but the combined CSV path is
-        still returned.
-    """
-
     print('Starting daily market update...')
 
     Extract.fetch_tv_data(tv, 1, 'daily')
@@ -144,24 +112,6 @@ def daily_market_update():
     return daily_data
 
 def daily_predictions(daily_data):
-
-    """Run the production model against the combined daily market CSV.
-    Args:
-        daily_data: Path to the combined daily CSV created by
-            ``daily_market_update``.
-    Returns:
-        Whatever ``print`` returns, currently ``None``. The printed message
-        contains the raw model predictions.
-    Side effects:
-        Loads model artifacts from disk; reads the daily CSV; attempts to write
-        predictions to the database; commits or rolls back the database session;
-        deletes the combined daily CSV in ``finally``.
-    Possible errors:
-        Raises ``FileNotFoundError`` when ``daily_data`` is missing. Model load
-        errors, missing metadata keys, missing feature columns, model inference
-        errors, or SQLAlchemy errors are rolled back and re-raised.
-    """
-
     print('Starting daily predictions...')
 
     if not daily_data or not os.path.exists(daily_data):
@@ -229,22 +179,6 @@ def daily_predictions(daily_data):
     return print(f'Today\'s predictions: {raw_preds}')
 
 def daily_recommendation_sets(latest_date):
-
-    """Create one recommendation set for each supported risk category.
-    Args:
-        latest_date: Intended to be the market date used for this daily
-            recommendation batch.
-    Returns:
-        None.
-    Side effects:
-        Inserts up to three ``RecommendationSet`` rows and commits the database
-        session. Rolls back on commit errors. Prints progress to stdout.
-    Possible errors:
-        SQLAlchemy query/flush/commit errors can occur. In the current model,
-        ``RecommendationSet`` has ``created_at`` but no ``date`` column, so the
-        duplicate-check query may fail before the commit block.
-    """
-
     print('Creating recommendation sets...')
 
     risk_categories = ['Conservative', 'Moderate', 'Aggressive']
@@ -282,22 +216,6 @@ def daily_recommendation_sets(latest_date):
         print(f"Error creating recommendation sets: {e}")
 
 def daily_recommendations(latest_date):
-
-    """Prepare daily stock recommendations from predicted returns.
-    Args:
-        latest_date: Intended market date for filtering predictions.
-    Returns:
-        None. The current function is incomplete and does not insert
-        ``Recommendation`` rows yet.
-    Side effects:
-        Reads predictions, stocks, and latest recommendation sets from the
-        database. It currently only prepares local variables and prints status.
-    Possible errors:
-        SQLAlchemy errors can occur while reading from the database. The current
-        implementation may also receive a function object instead of a date from
-        ``daily_pipeline``.
-    """
-
     print('Choosing stocks to recommend...')
 
     predicted_returns = get_all_predicted_returns(latest_date)
@@ -401,22 +319,6 @@ def daily_email():
         pass
 
 def daily_pipeline():
-
-    """Run the full daily scheduler workflow inside a Flask app context.
-    Inputs/parameters:
-        None. Uses module-level ``app`` and the helper functions above.
-    Returns:
-        None.
-    Side effects:
-        Pushes a Flask application context; fetches external market data;
-        reads/writes/deletes CSV files; loads ML artifacts; reads/writes the
-        database; prints status/errors.
-    Possible errors:
-        Any exception from the child steps can occur. The outer ``try`` catches
-        exceptions and prints an error message, so APScheduler may treat the job
-        as completed even when part of the pipeline failed.
-    """
-
     with app.app_context():
         try:
             daily_data = daily_market_update()
