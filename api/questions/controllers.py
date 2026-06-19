@@ -6,7 +6,7 @@ from api.common.utils.utils import *
 
 questions = Blueprint('questions', __name__)
 
-@questions.route('/')
+@questions.route('/', strict_slashes=False)
 @jwt_required()
 def get_questions():
     q_type = request.args.get('type')

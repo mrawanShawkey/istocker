@@ -16,6 +16,9 @@ from api.common.errors.error_handler import handle_error
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Handle HTTPS when behind a proxy (e.g., Render, AWS ELB)
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
 
     db.init_app(app)
     bcrypt.init_app(app)
@@ -62,6 +65,10 @@ def create_app():
     # Handle automatic OPTIONS responses from Werkzeug so they include CORS headers
     @app.before_request
     def _handle_options():
+        # Respect X-Forwarded-Proto from proxy (Render, AWS, etc.)
+        if request.headers.get('X-Forwarded-Proto') == 'https':
+            request.environ['wsgi.url_scheme'] = 'https'
+        
         if request.method == 'OPTIONS':
             resp = app.make_default_options_response()
             origin = request.headers.get('Origin')
