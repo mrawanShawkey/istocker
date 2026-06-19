@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_migrate import Migrate
 from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, JWTDecodeError
+from werkzeug.proxy_fix import ProxyFix
 
 from api.config import Config
 from api.common.extentions.extentions import db, bcrypt, jwt
@@ -16,6 +17,9 @@ from api.common.errors.error_handler import handle_error
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Apply ProxyFix to handle X-Forwarded-* headers from Render/Cloudflare
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
     
     # Handle HTTPS when behind a proxy (e.g., Render, AWS ELB)
     app.config['PREFERRED_URL_SCHEME'] = 'https'
@@ -65,10 +69,6 @@ def create_app():
     # Handle automatic OPTIONS responses from Werkzeug so they include CORS headers
     @app.before_request
     def _handle_options():
-        # Respect X-Forwarded-Proto from proxy (Render, AWS, etc.)
-        if request.headers.get('X-Forwarded-Proto') == 'https':
-            request.environ['wsgi.url_scheme'] = 'https'
-        
         if request.method == 'OPTIONS':
             resp = app.make_default_options_response()
             origin = request.headers.get('Origin')
