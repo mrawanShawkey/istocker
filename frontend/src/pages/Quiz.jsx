@@ -117,7 +117,7 @@ export default function Quiz() {
 
     setSubmitting(true)
     try {
-      const result = await questionsService.saveQuestionnaireResponses(responses)
+    const result = await questionsService.saveQuestionnaireResponses({ responses })
       setQuizResult(normalizeRiskProfile(result))
       navigate(ROUTES.RESULT)
     } catch (err) {
