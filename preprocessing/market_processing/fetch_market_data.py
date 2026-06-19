@@ -9,7 +9,7 @@ import pandas as pd
 # Setup project directories cleanly
 ROOT_DIR = Path().resolve()
 sys.path.append(str(ROOT_DIR))
-from config.paths import MARKET_DIR
+from config.paths import MARKET_DIR , DAILY_DIR
 
 EGX30_TICKERS = [
     'COMI', 'HRHO', 'TMGH', 'FWRY', 'EAST', 'SWDY', 'ABUK',
@@ -29,7 +29,7 @@ def fetch_tv_data(tv, n_bars, purpose, tickers=EGX30_TICKERS):
         if purpose == 'ml':
             file_path = MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv"
         if purpose == 'daily':
-            file_path = MARKET_DIR / 'daily' / f"{ticker}_TV_Data.csv"
+            file_path = DAILY_DIR / f"{ticker}_TV_Data.csv"
         if file_path.exists():
             print(f"Skipping {ticker}... File already exists.")
             continue
@@ -59,7 +59,7 @@ def fetch_with_retries(tv, n_bars, purpose, tickers = retry_list, retries=3, del
         if purpose == 'ml':
             file_path = MARKET_DIR / 'raw' / f"{ticker}_TV_Data.csv"
         if purpose == 'daily':
-            file_path = MARKET_DIR / 'daily' / f"{ticker}_TV_Data.csv"
+            file_path =  DAILY_DIR / f"{ticker}_TV_Data.csv"
         if file_path.exists():
             print(f"Skipping {ticker}... File already exists.")
             continue
@@ -134,7 +134,7 @@ def collect_and_combine(purpose, output_file):
     if purpose == 'ml':
             all_files = glob.glob(str(MARKET_DIR / 'raw' / "*_TV_Data.csv"))
     if purpose == 'daily':
-            all_files = glob.glob(str(MARKET_DIR / 'daily' / "*_TV_Data.csv"))
+            all_files = glob.glob(str( DAILY_DIR / "*_TV_Data.csv"))
     
     df_list = []
     companies_added = 0
