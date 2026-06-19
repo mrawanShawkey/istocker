@@ -11,7 +11,7 @@ function assertQuestionType(type) {
 export const questionsService = {
   async getQuestions(type) {
     assertQuestionType(type)
-    const response = await apiClient.get(`/questions?type=${encodeURIComponent(type)}`)
+    const response = await apiClient.get(`/questions/?type=${encodeURIComponent(type)}`)
     return response.data
   },
 
