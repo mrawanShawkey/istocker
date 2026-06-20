@@ -1,0 +1,1161 @@
+{
+  "info": {
+    "name": "iStocker API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Returns accessToken and refreshToken', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('accessToken');",
+                  "  pm.expect(res.data).to.have.property('refreshToken');",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register - Duplicate Email (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 409 for duplicate email', function() { pm.response.to.have.status(409); });",
+                  "pm.test('Error code is ALREADY_EXISTS', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.code).to.eql('ALREADY_EXISTS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns accessToken and refreshToken', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('accessToken');",
+                  "  pm.expect(res.data).to.have.property('refreshToken');",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - Wrong Credentials (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401 for wrong credentials', function() { pm.response.to.have.status(401); });",
+                  "pm.test('Error code is INCORRECT_CREDENTIALS', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.code).to.eql('INCORRECT_CREDENTIALS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"WrongPassword!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns new access token', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('newAccessToken');",
+                  "  pm.collectionVariables.set('accessToken', res.data.newAccessToken);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{refreshToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Verification code sent message', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.success).to.be.true;",
+                  "  pm.expect(res.message).to.eql('Verification code sent to email.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Password changed successfully', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.success).to.be.true;",
+                  "  pm.expect(res.message).to.eql('Password changed successfully.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"ENTER_CODE_FROM_EMAIL\",\n  \"email\": \"testuser@example.com\",\n  \"newPassword\": \"NewPassword456!\",\n  \"rePassword\": \"NewPassword456!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Change Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Email changed successfully', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.message).to.eql('Email successfully changed.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldEmail\": \"testuser@example.com\",\n  \"password\": \"Password123!\",\n  \"newEmail\": \"newemail@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-email",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-email"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Password changed successfully', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.message).to.eql('Password successfully changed.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword456!\",\n  \"rePassword\": \"NewPassword456!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('User logged out', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.message).to.eql('User logged out.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 204', function() { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Refresh-Token",
+                "value": "{{refreshToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/delete-account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "delete-account"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns user profile fields', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('firstName');",
+                  "  pm.expect(res.data).to.have.property('lastName');",
+                  "  pm.expect(res.data).to.have.property('memberSince');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Settings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns settings fields', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('language');",
+                  "  pm.expect(res.data).to.have.property('notifications');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Profile updated successfully', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modifications\": [\n    { \"field\": \"firstName\", \"value\": \"UpdatedName\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Preferences",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Preferences updated successfully', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modifications\": [\n    { \"field\": \"lang\", \"value\": \"Ar\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "preferences"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Questions",
+      "item": [
+        {
+          "name": "Get Registration Questions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns 4 registration questions', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.be.an('array').with.lengthOf(4);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/questions/?type=Registration",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "questions",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Registration"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Questionnaire Questions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns 17 questionnaire questions', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.be.an('array').with.lengthOf(17);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/questions/?type=Questionnaire",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "questions",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Questionnaire"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Questions - Missing Type (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 400 for missing type', function() { pm.response.to.have.status(400); });",
+                  "pm.test('Error code is MISSING_QUESTION_TYPE', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.code).to.eql('MISSING_QUESTION_TYPE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/questions/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "questions",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Registration Responses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Responses saved', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.message).to.eql('Responses saved.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"responses\": [\n    { \"questionId\": 1, \"optionId\": 2 },\n    { \"questionId\": 2, \"optionId\": 5 },\n    { \"questionId\": 3, \"optionId\": 8 },\n    { \"questionId\": 4, \"optionId\": 11 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/questions/responses?type=Registration",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "questions",
+                "responses"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Registration"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Questionnaire Responses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Risk profile is returned', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('riskCategory');",
+                  "  pm.expect(res.data).to.have.property('totalRiskScore');",
+                  "  pm.expect(res.data).to.have.property('riskCapacityScore');",
+                  "  pm.expect(res.data).to.have.property('riskToleranceScore');",
+                  "});",
+                  "pm.test('Risk Capacity Score is 44', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.riskCapacityScore).to.eql(44);",
+                  "});",
+                  "pm.test('Risk Tolerance Score is 36', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.riskToleranceScore).to.eql(36);",
+                  "});",
+                  "pm.test('Total Risk Score is 42', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.totalRiskScore).to.eql(42);",
+                  "});",
+                  "pm.test('Risk Category is Moderate', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.riskCategory).to.eql('Moderate');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"responses\": [\n    {\n      \"questionId\": 5,\n      \"optionId\": 1\n    },\n    {\n      \"questionId\": 6,\n      \"optionId\": 3\n    },\n    {\n      \"questionId\": 7,\n      \"optionId\": 2\n    },\n    {\n      \"questionId\": 8,\n      \"optionId\": 4\n    },\n    {\n      \"questionId\": 9,\n      \"optionId\": 1\n    },\n    {\n      \"questionId\": 10,\n      \"optionId\": 2\n    },\n    {\n      \"questionId\": 11,\n      \"optionId\": 2\n    },\n    {\n      \"questionId\": 12,\n      \"optionId\": 1\n    },\n    {\n      \"questionId\": 13,\n      \"optionId\": 4\n    },\n    {\n      \"questionId\": 14,\n      \"optionId\": 2\n    },\n    {\n      \"questionId\": 15,\n      \"optionId\": 3\n    },\n    {\n      \"questionId\": 16,\n      \"optionId\": 1\n    },\n    {\n      \"questionId\": 17,\n      \"optionId\": 2\n    },\n    {\n      \"questionId\": 18,\n      \"optionId\": 4\n    },\n    {\n      \"questionId\": 19,\n      \"optionId\": 1\n    },\n    {\n      \"questionId\": 20,\n      \"optionId\": 3\n    },\n    {\n      \"questionId\": 21,\n      \"optionId\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/questions/responses?type=Questionnaire",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "questions",
+                "responses"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Questionnaire"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit Registration Responses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Responses updated', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.message).to.eql('Responses updated.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modifications\": [\n    { \"questionId\": 1, \"optionId\": 3 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/questions/responses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "questions",
+                "responses"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recommendations",
+      "item": [
+        {
+          "name": "Get Recommendations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns 3 stock recommendations', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.recommendations).to.be.an('array').with.lengthOf(3);",
+                  "});",
+                  "pm.test('Each recommendation has required fields', function() {",
+                  "  const res = pm.response.json();",
+                  "  const rec = res.data.recommendations[0];",
+                  "  pm.expect(rec).to.have.property('ticker');",
+                  "  pm.expect(rec).to.have.property('riskLevel');",
+                  "  pm.expect(rec).to.have.property('predictedReturn');",
+                  "  pm.expect(rec).to.have.property('rank');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recommendations/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recommendations",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Recommendations - No Questionnaire (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 404 when questionnaire not answered', function() { pm.response.to.have.status(404); });",
+                  "pm.test('Error code is RESULTS_NOT_FOUND', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.code).to.eql('RESULTS_NOT_FOUND');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recommendations/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recommendations",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Market",
+      "item": [
+        {
+          "name": "Get Market Overview",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns market data fields', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('date');",
+                  "  pm.expect(res.data).to.have.property('currentPrices');",
+                  "  pm.expect(res.data).to.have.property('topMovers');",
+                  "  pm.expect(res.data).to.have.property('topSectors');",
+                  "});",
+                  "pm.test('Top movers returns 5 stocks', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.topMovers).to.be.an('array').with.lengthOf(5);",
+                  "});",
+                  "pm.test('Top sectors returns 5 sectors', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data.topSectors).to.be.an('array').with.lengthOf(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/market",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Stock by Ticker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Returns stock details and month prices', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.data).to.have.property('companyName');",
+                  "  pm.expect(res.data).to.have.property('sector');",
+                  "  pm.expect(res.data).to.have.property('monthPrices');",
+                  "  pm.expect(res.data.monthPrices).to.be.an('array').with.lengthOf(30);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/market/COMI",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market",
+                "COMI"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Stock by Ticker - Invalid Ticker (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 404 for invalid ticker', function() { pm.response.to.have.status(404); });",
+                  "pm.test('Error code is TICKER_NOT_FOUND', function() {",
+                  "  const res = pm.response.json();",
+                  "  pm.expect(res.code).to.eql('TICKER_NOT_FOUND');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/market/INVALIDTICKER",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market",
+                "INVALIDTICKER"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
