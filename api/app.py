@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_migrate import Migrate
 from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, JWTDecodeError
-from werkzeug.proxy_fix import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from api.config import Config
 from api.common.extentions.extentions import db, bcrypt, jwt
